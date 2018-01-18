@@ -30,19 +30,42 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hYL-jP-oqA" userLabel="Shutter button">
-                                <rect key="frame" x="147.66666666666666" y="678" width="80" height="80"/>
+                                <rect key="frame" x="147.66666666666666" y="681" width="80" height="80"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="80" id="AG5-E8-dfj"/>
                                     <constraint firstAttribute="height" constant="80" id="Tiv-8H-dlc"/>
                                 </constraints>
                                 <state key="normal" title="Shutter"/>
+                                <connections>
+                                    <action selector="addConcept:" destination="Ytb-hZ-ieT" eventType="touchUpInside" id="9u7-Xm-dDG"/>
+                                </connections>
                             </button>
+                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ADD A CONCEPT" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y3H-uJ-Tsj" userLabel="Add concept label">
+                                <rect key="frame" x="131.66666666666666" y="763" width="113.66666666666666" height="18"/>
+                                <gestureRecognizers/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="18" id="35s-Lf-S2x"/>
+                                    <constraint firstAttribute="width" constant="113.66666666666667" id="dZP-Zn-aGy"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                                <color key="shadowColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <size key="shadowOffset" width="1" height="1"/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="oPf-QR-ygA" appends="YES" id="uPQ-zL-04E"/>
+                                </connections>
+                            </label>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="hYL-jP-oqA" firstAttribute="centerX" secondItem="QVG-gK-BMI" secondAttribute="centerX" id="5fT-Hv-c65"/>
-                            <constraint firstItem="QVG-gK-BMI" firstAttribute="bottom" secondItem="hYL-jP-oqA" secondAttribute="bottom" constant="20" id="M23-MQ-gc1"/>
+                            <constraint firstItem="y3H-uJ-Tsj" firstAttribute="centerX" secondItem="QVG-gK-BMI" secondAttribute="centerX" id="CzV-b4-MHA"/>
+                            <constraint firstItem="QVG-gK-BMI" firstAttribute="bottom" secondItem="y3H-uJ-Tsj" secondAttribute="bottom" id="D7W-ie-PL2"/>
+                            <constraint firstItem="QVG-gK-BMI" firstAttribute="bottom" secondItem="hYL-jP-oqA" secondAttribute="bottom" constant="17" id="M23-MQ-gc1"/>
+                            <constraint firstItem="y3H-uJ-Tsj" firstAttribute="top" secondItem="hYL-jP-oqA" secondAttribute="bottom" constant="2" id="Md6-hr-vHP"/>
                             <constraint firstItem="Bhi-9k-wCH" firstAttribute="top" secondItem="QVG-gK-BMI" secondAttribute="top" id="Wgl-FY-1DN"/>
+                            <constraint firstItem="y3H-uJ-Tsj" firstAttribute="centerX" secondItem="hYL-jP-oqA" secondAttribute="centerX" id="bdI-nE-U9Q"/>
                             <constraint firstItem="hYL-jP-oqA" firstAttribute="leading" secondItem="QVG-gK-BMI" secondAttribute="leading" constant="20" id="lrf-43-KNs"/>
                             <constraint firstItem="Bhi-9k-wCH" firstAttribute="leading" secondItem="QVG-gK-BMI" secondAttribute="leading" constant="16" id="uVw-Bw-ueA"/>
                             <constraint firstItem="hYL-jP-oqA" firstAttribute="centerY" secondItem="QVG-gK-BMI" secondAttribute="centerY" id="xDh-Jb-jWy"/>
@@ -52,6 +75,8 @@
                             <mask key="constraints">
                                 <exclude reference="lrf-43-KNs"/>
                                 <exclude reference="xDh-Jb-jWy"/>
+                                <exclude reference="Md6-hr-vHP"/>
+                                <exclude reference="bdI-nE-U9Q"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=compact">
@@ -62,14 +87,28 @@
                                 <include reference="xDh-Jb-jWy"/>
                             </mask>
                         </variation>
+                        <variation key="widthClass=compact">
+                            <mask key="constraints">
+                                <exclude reference="D7W-ie-PL2"/>
+                                <exclude reference="CzV-b4-MHA"/>
+                                <include reference="Md6-hr-vHP"/>
+                                <include reference="bdI-nE-U9Q"/>
+                            </mask>
+                        </variation>
                     </view>
                     <connections>
                         <outlet property="settingsButton" destination="Bhi-9k-wCH" id="wxH-9Z-Djw"/>
+                        <outlet property="shutterButton" destination="hYL-jP-oqA" id="Qjw-7D-O8p"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="U5v-Nf-Twq" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="oPf-QR-ygA" userLabel="Add concept tap gesture">
+                    <connections>
+                        <action selector="addConcept:" destination="Ytb-hZ-ieT" id="iHq-3b-CYG"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="63" y="-3"/>
+            <point key="canvasLocation" x="61.600000000000001" y="-3.6945812807881775"/>
         </scene>
         <!--Settings View Controller-->
         <scene sceneID="z0C-dV-T3v">
