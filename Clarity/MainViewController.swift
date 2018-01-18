@@ -8,6 +8,8 @@
 import UIKit
 
 class MainViewController: UIViewController {
+    @IBOutlet weak var settingsButton: UIButton!
+
     override func viewDidLoad() {
         super.viewDidLoad()
     }
