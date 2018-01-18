@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -119,10 +120,9 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TBa-hk-vuw">
-                                <rect key="frame" x="309" y="44" width="50" height="30"/>
+                                <rect key="frame" x="313" y="44" width="46" height="30"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="30" id="3dC-bn-JAm"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="b5g-65-Ifb"/>
+                                    <constraint firstAttribute="width" constant="46" id="5Qt-vL-SPb"/>
                                 </constraints>
                                 <state key="normal" title="Done"/>
                                 <connections>
@@ -132,8 +132,9 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="5RV-AZ-h4H" firstAttribute="trailing" secondItem="TBa-hk-vuw" secondAttribute="trailing" constant="16" id="3p8-fE-Yd1"/>
-                            <constraint firstItem="TBa-hk-vuw" firstAttribute="top" secondItem="5RV-AZ-h4H" secondAttribute="top" id="5A1-eH-6lV"/>
+                            <constraint firstItem="TBa-hk-vuw" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="5RV-AZ-h4H" secondAttribute="leading" constant="309" id="XXq-c8-XIH"/>
+                            <constraint firstItem="TBa-hk-vuw" firstAttribute="top" secondItem="5RV-AZ-h4H" secondAttribute="top" id="kcB-8U-zBX"/>
+                            <constraint firstItem="TBa-hk-vuw" firstAttribute="trailing" secondItem="8Ol-iW-lTQ" secondAttribute="trailingMargin" id="sfc-IJ-xnE"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="5RV-AZ-h4H"/>
                     </view>
