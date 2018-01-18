@@ -32,7 +32,7 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hYL-jP-oqA" userLabel="Shutter button">
                                 <rect key="frame" x="147.66666666666666" y="681" width="80" height="80"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="80" id="AG5-E8-dfj"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="AG5-E8-dfj"/>
                                     <constraint firstAttribute="height" constant="80" id="Tiv-8H-dlc"/>
                                 </constraints>
                                 <state key="normal" title="Shutter"/>
@@ -40,12 +40,12 @@
                                     <action selector="addConcept:" destination="Ytb-hZ-ieT" eventType="touchUpInside" id="9u7-Xm-dDG"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ADD A CONCEPT" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y3H-uJ-Tsj" userLabel="Add concept label">
-                                <rect key="frame" x="131.66666666666666" y="763" width="113.66666666666666" height="18"/>
+                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ADD A CONCEPT" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y3H-uJ-Tsj" userLabel="Add concept label">
+                                <rect key="frame" x="131.33333333333334" y="763" width="113.66666666666666" height="18"/>
                                 <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="18" id="35s-Lf-S2x"/>
-                                    <constraint firstAttribute="width" constant="113.66666666666667" id="dZP-Zn-aGy"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="114" id="dZP-Zn-aGy"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -118,11 +118,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TBa-hk-vuw">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TBa-hk-vuw">
                                 <rect key="frame" x="309" y="44" width="50" height="30"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="3dC-bn-JAm"/>
-                                    <constraint firstAttribute="width" constant="50" id="b5g-65-Ifb"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="30" id="3dC-bn-JAm"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="b5g-65-Ifb"/>
                                 </constraints>
                                 <state key="normal" title="Done"/>
                                 <connections>
