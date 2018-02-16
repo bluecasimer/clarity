@@ -13,6 +13,8 @@
 		C922540A201120FF00CC6302 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9225409201120FF00CC6302 /* Assets.xcassets */; };
 		C922540D201120FF00CC6302 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C922540B201120FF00CC6302 /* LaunchScreen.storyboard */; };
 		C922541620112B9100CC6302 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C922541520112B9100CC6302 /* SettingsViewController.swift */; };
+		EB19CF36203223B800FC7658 /* FrameExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB19CF35203223B800FC7658 /* FrameExtractor.swift */; };
+		EB1F3915202E31F60084F7AA /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1F3914202E31F60084F7AA /* PreviewView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +27,8 @@
 		C922540E201120FF00CC6302 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C9225414201121C000CC6302 /* Clarity.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Clarity.entitlements; sourceTree = "<group>"; };
 		C922541520112B9100CC6302 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		EB19CF35203223B800FC7658 /* FrameExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameExtractor.swift; sourceTree = "<group>"; };
+		EB1F3914202E31F60084F7AA /* PreviewView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,7 +63,9 @@
 			children = (
 				C9225414201121C000CC6302 /* Clarity.entitlements */,
 				C9225402201120FF00CC6302 /* AppDelegate.swift */,
+				EB1F3914202E31F60084F7AA /* PreviewView.swift */,
 				C9225404201120FF00CC6302 /* MainViewController.swift */,
+				EB19CF35203223B800FC7658 /* FrameExtractor.swift */,
 				C922541520112B9100CC6302 /* SettingsViewController.swift */,
 				C9225406201120FF00CC6302 /* Main.storyboard */,
 				C9225409201120FF00CC6302 /* Assets.xcassets */,
@@ -150,8 +156,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9225405201120FF00CC6302 /* MainViewController.swift in Sources */,
+				EB1F3915202E31F60084F7AA /* PreviewView.swift in Sources */,
 				C9225403201120FF00CC6302 /* AppDelegate.swift in Sources */,
 				C922541620112B9100CC6302 /* SettingsViewController.swift in Sources */,
+				EB19CF36203223B800FC7658 /* FrameExtractor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,7 +233,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -276,7 +284,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
