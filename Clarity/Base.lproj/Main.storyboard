@@ -7,9 +7,15 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="Menlo.ttc">
+            <string>Menlo-Regular</string>
+        </array>
+    </customFonts>
     <scenes>
         <!--Main View Controller-->
         <scene sceneID="xrl-A7-T8Y">
@@ -19,30 +25,30 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Bhi-9k-wCH">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Bhi-9k-wCH">
                                 <rect key="frame" x="16" y="44" width="46" height="46"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="46" id="JhQ-fw-dYh"/>
                                     <constraint firstAttribute="height" constant="46" id="xsi-OC-q70"/>
                                 </constraints>
-                                <state key="normal" title="S"/>
+                                <state key="normal" image="settingsGear"/>
                                 <connections>
                                     <segue destination="Kkg-Jz-6EE" kind="presentation" identifier="SettingsSegue" id="oTd-4N-IZr"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hYL-jP-oqA" userLabel="Shutter button">
-                                <rect key="frame" x="147.66666666666666" y="681" width="80" height="80"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hYL-jP-oqA" userLabel="Shutter button">
+                                <rect key="frame" x="147.66666666666666" y="673" width="80" height="80"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="AG5-E8-dfj"/>
                                     <constraint firstAttribute="height" constant="80" id="Tiv-8H-dlc"/>
                                 </constraints>
-                                <state key="normal" title="Shutter"/>
+                                <state key="normal" image="shutterButton"/>
                                 <connections>
                                     <action selector="addConcept:" destination="Ytb-hZ-ieT" eventType="touchUpInside" id="9u7-Xm-dDG"/>
                                 </connections>
                             </button>
                             <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ADD A CONCEPT" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y3H-uJ-Tsj" userLabel="Add concept label">
-                                <rect key="frame" x="131.33333333333334" y="763" width="113.66666666666666" height="18"/>
+                                <rect key="frame" x="131.33333333333334" y="755" width="113.66666666666666" height="18"/>
                                 <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="18" id="35s-Lf-S2x"/>
@@ -64,17 +70,41 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" layoutMarginsFollowReadableWidth="YES" alwaysBounceVertical="YES" scrollEnabled="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Paw-sJ-3NY">
+                                <rect key="frame" x="163.66666666666663" y="59" width="206.33333333333337" height="275"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="275" id="lYY-YS-U2E"/>
+                                </constraints>
+                            </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EJT-mw-cA0">
+                                <rect key="frame" x="164" y="335" width="206" height="70"/>
+                                <color key="backgroundColor" red="0.0" green="0.30460379464285714" blue="0.92064732142857142" alpha="0.89554907570422537" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="70" id="Fh8-A8-kk8"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Menlo-Regular" family="Menlo" pointSize="15"/>
+                                <state key="normal" title="SHOW ALL CONCEPTS">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="hYL-jP-oqA" firstAttribute="centerX" secondItem="QVG-gK-BMI" secondAttribute="centerX" id="5fT-Hv-c65"/>
                             <constraint firstItem="y3H-uJ-Tsj" firstAttribute="centerX" secondItem="QVG-gK-BMI" secondAttribute="centerX" id="CzV-b4-MHA"/>
                             <constraint firstItem="QVG-gK-BMI" firstAttribute="bottom" secondItem="y3H-uJ-Tsj" secondAttribute="bottom" id="D7W-ie-PL2"/>
-                            <constraint firstItem="QVG-gK-BMI" firstAttribute="bottom" secondItem="hYL-jP-oqA" secondAttribute="bottom" constant="17" id="M23-MQ-gc1"/>
                             <constraint firstItem="y3H-uJ-Tsj" firstAttribute="top" secondItem="hYL-jP-oqA" secondAttribute="bottom" constant="2" id="Md6-hr-vHP"/>
+                            <constraint firstItem="Paw-sJ-3NY" firstAttribute="width" secondItem="vM5-Dc-3mj" secondAttribute="width" multiplier="0.55" id="N6u-qN-Yzj"/>
+                            <constraint firstItem="EJT-mw-cA0" firstAttribute="top" secondItem="Paw-sJ-3NY" secondAttribute="bottom" constant="1" id="OoJ-aw-dUk"/>
+                            <constraint firstItem="QVG-gK-BMI" firstAttribute="trailing" secondItem="Paw-sJ-3NY" secondAttribute="trailing" constant="5" id="PCd-mN-sfa"/>
+                            <constraint firstItem="y3H-uJ-Tsj" firstAttribute="bottom" secondItem="QVG-gK-BMI" secondAttribute="bottom" constant="-5" id="RbD-qe-Qbr"/>
                             <constraint firstItem="Bhi-9k-wCH" firstAttribute="top" secondItem="QVG-gK-BMI" secondAttribute="top" id="Wgl-FY-1DN"/>
                             <constraint firstItem="y3H-uJ-Tsj" firstAttribute="centerX" secondItem="hYL-jP-oqA" secondAttribute="centerX" id="bdI-nE-U9Q"/>
+                            <constraint firstItem="EJT-mw-cA0" firstAttribute="width" secondItem="Paw-sJ-3NY" secondAttribute="width" id="cdB-WD-QwW"/>
+                            <constraint firstItem="EJT-mw-cA0" firstAttribute="centerX" secondItem="Paw-sJ-3NY" secondAttribute="centerX" id="i8j-0F-OMg"/>
                             <constraint firstItem="hYL-jP-oqA" firstAttribute="leading" secondItem="QVG-gK-BMI" secondAttribute="leading" constant="20" id="lrf-43-KNs"/>
+                            <constraint firstItem="Paw-sJ-3NY" firstAttribute="top" secondItem="QVG-gK-BMI" secondAttribute="top" constant="15" id="nhZ-PJ-mmv"/>
                             <constraint firstItem="Bhi-9k-wCH" firstAttribute="leading" secondItem="QVG-gK-BMI" secondAttribute="leading" constant="16" id="uVw-Bw-ueA"/>
                             <constraint firstItem="hYL-jP-oqA" firstAttribute="centerY" secondItem="QVG-gK-BMI" secondAttribute="centerY" id="xDh-Jb-jWy"/>
                         </constraints>
@@ -89,7 +119,6 @@
                         </variation>
                         <variation key="heightClass=compact">
                             <mask key="constraints">
-                                <exclude reference="M23-MQ-gc1"/>
                                 <exclude reference="5fT-Hv-c65"/>
                                 <include reference="lrf-43-KNs"/>
                                 <include reference="xDh-Jb-jWy"/>
@@ -106,8 +135,11 @@
                     </view>
                     <connections>
                         <outlet property="conceptTextField" destination="yrg-XZ-oXI" id="6AI-sY-NZL"/>
+                        <outlet property="predictionsTableHeight" destination="lYY-YS-U2E" id="8AC-xL-Ego"/>
+                        <outlet property="predictionsTableView" destination="Paw-sJ-3NY" id="ysD-ux-3Da"/>
                         <outlet property="previewView" destination="vM5-Dc-3mj" id="suw-8P-iDr"/>
                         <outlet property="settingsButton" destination="Bhi-9k-wCH" id="wxH-9Z-Djw"/>
+                        <outlet property="showAllConceptsButton" destination="EJT-mw-cA0" id="h4q-2l-mVP"/>
                         <outlet property="shutterButton" destination="hYL-jP-oqA" id="Qjw-7D-O8p"/>
                     </connections>
                 </viewController>
@@ -156,4 +188,8 @@
             <point key="canvasLocation" x="880.79999999999995" y="-3.1484257871064472"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="settingsGear" width="28" height="27"/>
+        <image name="shutterButton" width="60" height="60"/>
+    </resources>
 </document>

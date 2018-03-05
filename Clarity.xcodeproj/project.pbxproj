@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		53EA23CA5E10FCF6DD932B41 /* Pods_Clarity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C56AF82F033F20956C2854D /* Pods_Clarity.framework */; };
 		C9225403201120FF00CC6302 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9225402201120FF00CC6302 /* AppDelegate.swift */; };
 		C9225405201120FF00CC6302 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9225404201120FF00CC6302 /* MainViewController.swift */; };
 		C9225408201120FF00CC6302 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9225406201120FF00CC6302 /* Main.storyboard */; };
@@ -14,10 +15,16 @@
 		C922540D201120FF00CC6302 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C922540B201120FF00CC6302 /* LaunchScreen.storyboard */; };
 		C922541620112B9100CC6302 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C922541520112B9100CC6302 /* SettingsViewController.swift */; };
 		EB19CF36203223B800FC7658 /* FrameExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB19CF35203223B800FC7658 /* FrameExtractor.swift */; };
+		EB1A99592040A632008795AB /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1A99582040A632008795AB /* Constants.swift */; };
 		EB1F3915202E31F60084F7AA /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1F3914202E31F60084F7AA /* PreviewView.swift */; };
+		EBD343BA204A0DF90030DE76 /* PredictionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD343B8204A0DF90030DE76 /* PredictionTableViewCell.swift */; };
+		EBD343BB204A0DF90030DE76 /* PredictionTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = EBD343B9204A0DF90030DE76 /* PredictionTableViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0BF4FAE286AB462BEC2E4D37 /* Pods-Clarity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clarity.release.xcconfig"; path = "Pods/Target Support Files/Pods-Clarity/Pods-Clarity.release.xcconfig"; sourceTree = "<group>"; };
+		1C56AF82F033F20956C2854D /* Pods_Clarity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Clarity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		88119CE6CE7653F6459A0F8C /* Pods-Clarity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clarity.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Clarity/Pods-Clarity.debug.xcconfig"; sourceTree = "<group>"; };
 		C92253FF201120FF00CC6302 /* Clarity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clarity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9225402201120FF00CC6302 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C9225404201120FF00CC6302 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -28,7 +35,10 @@
 		C9225414201121C000CC6302 /* Clarity.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Clarity.entitlements; sourceTree = "<group>"; };
 		C922541520112B9100CC6302 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		EB19CF35203223B800FC7658 /* FrameExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameExtractor.swift; sourceTree = "<group>"; };
+		EB1A99582040A632008795AB /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		EB1F3914202E31F60084F7AA /* PreviewView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
+		EBD343B8204A0DF90030DE76 /* PredictionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionTableViewCell.swift; sourceTree = "<group>"; };
+		EBD343B9204A0DF90030DE76 /* PredictionTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PredictionTableViewCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,17 +46,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53EA23CA5E10FCF6DD932B41 /* Pods_Clarity.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		57721AC5BEB75EBEDF8BC433 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1C56AF82F033F20956C2854D /* Pods_Clarity.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		C92253F6201120FF00CC6302 = {
 			isa = PBXGroup;
 			children = (
 				C9225401201120FF00CC6302 /* Clarity */,
 				C9225400201120FF00CC6302 /* Products */,
+				E7FC5FCD183510B6B2E62D85 /* Pods */,
+				57721AC5BEB75EBEDF8BC433 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -63,8 +84,11 @@
 			children = (
 				C9225414201121C000CC6302 /* Clarity.entitlements */,
 				C9225402201120FF00CC6302 /* AppDelegate.swift */,
+				EB1A99582040A632008795AB /* Constants.swift */,
 				EB1F3914202E31F60084F7AA /* PreviewView.swift */,
 				C9225404201120FF00CC6302 /* MainViewController.swift */,
+				EBD343B8204A0DF90030DE76 /* PredictionTableViewCell.swift */,
+				EBD343B9204A0DF90030DE76 /* PredictionTableViewCell.xib */,
 				EB19CF35203223B800FC7658 /* FrameExtractor.swift */,
 				C922541520112B9100CC6302 /* SettingsViewController.swift */,
 				C9225406201120FF00CC6302 /* Main.storyboard */,
@@ -75,6 +99,15 @@
 			path = Clarity;
 			sourceTree = "<group>";
 		};
+		E7FC5FCD183510B6B2E62D85 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				88119CE6CE7653F6459A0F8C /* Pods-Clarity.debug.xcconfig */,
+				0BF4FAE286AB462BEC2E4D37 /* Pods-Clarity.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -82,9 +115,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C9225411201120FF00CC6302 /* Build configuration list for PBXNativeTarget "Clarity" */;
 			buildPhases = (
+				9217040CC7207229C6CD01AC /* [CP] Check Pods Manifest.lock */,
 				C92253FB201120FF00CC6302 /* Sources */,
 				C92253FC201120FF00CC6302 /* Frameworks */,
 				C92253FD201120FF00CC6302 /* Resources */,
+				B99807F0EBE463E075C46306 /* [CP] Embed Pods Frameworks */,
+				6FF40F3A5E798142D2661DA5 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -142,6 +178,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EBD343BB204A0DF90030DE76 /* PredictionTableViewCell.xib in Resources */,
 				C922540D201120FF00CC6302 /* LaunchScreen.storyboard in Resources */,
 				C922540A201120FF00CC6302 /* Assets.xcassets in Resources */,
 				C9225408201120FF00CC6302 /* Main.storyboard in Resources */,
@@ -149,6 +186,60 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		6FF40F3A5E798142D2661DA5 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Clarity/Pods-Clarity-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9217040CC7207229C6CD01AC /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Clarity-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B99807F0EBE463E075C46306 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Clarity/Pods-Clarity-frameworks.sh",
+				"${PODS_ROOT}/Clarifai-Apple-SDK/Clarifai_Apple_SDK.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Clarifai_Apple_SDK.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Clarity/Pods-Clarity-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C92253FB201120FF00CC6302 /* Sources */ = {
@@ -159,7 +250,9 @@
 				EB1F3915202E31F60084F7AA /* PreviewView.swift in Sources */,
 				C9225403201120FF00CC6302 /* AppDelegate.swift in Sources */,
 				C922541620112B9100CC6302 /* SettingsViewController.swift in Sources */,
+				EBD343BA204A0DF90030DE76 /* PredictionTableViewCell.swift in Sources */,
 				EB19CF36203223B800FC7658 /* FrameExtractor.swift in Sources */,
+				EB1A99592040A632008795AB /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,6 +387,7 @@
 		};
 		C9225412201120FF00CC6302 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 88119CE6CE7653F6459A0F8C /* Pods-Clarity.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Clarity/Clarity.entitlements;
@@ -310,6 +404,7 @@
 		};
 		C9225413201120FF00CC6302 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0BF4FAE286AB462BEC2E4D37 /* Pods-Clarity.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Clarity/Clarity.entitlements;
