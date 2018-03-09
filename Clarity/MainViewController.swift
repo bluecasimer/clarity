@@ -38,6 +38,8 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
 
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleImageProcessingDidComplete(notification:)), name: ImageProcessingDidFinish, object: nil)
 
+        NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.viewDidRotate(notification:)), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
+
         // Begin extracting video frames to predict on
         frameExtractor = FrameExtractor()
         frameExtractor.delegate = self;
@@ -65,6 +67,20 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         predictionsTableView.register(cellNib, forCellReuseIdentifier: "PredictionCell")
 
         showAllConceptsButton.layer.cornerRadius = 2.0
+    }
+
+    @objc func viewDidRotate(notification: Notification) {
+        DispatchQueue.main.async {
+            let statusBarOrientation = UIApplication.shared.statusBarOrientation
+            var initialVideoOrientation: AVCaptureVideoOrientation = .portrait
+            if statusBarOrientation != .unknown {
+                if let videoOrientation = AVCaptureVideoOrientation(rawValue: statusBarOrientation.rawValue) {
+                    initialVideoOrientation = videoOrientation
+                }
+            }
+            self.previewView.videoPreviewLayer.connection?.videoOrientation = initialVideoOrientation
+            self.previewView.videoPreviewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill;
+        }
     }
 
     func captured(image: UIImage) {
@@ -95,7 +111,7 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
                 self.predictions = Array(self.filterConcepts(concepts:concepts).prefix(5))
                 let range = NSMakeRange(0, self.predictionsTableView.numberOfSections)
                 let sections = NSIndexSet(indexesIn: range)
-                self.predictionsTableView.reloadSections(sections as IndexSet, with: .fade)
+                self.predictionsTableView.reloadSections(sections as IndexSet, with: .none)
                 self.predictionsTableHeight?.constant = self.predictionsTableView.contentSize.height
                 UIView.animate(withDuration: 0.4) {
                     self.view.layoutIfNeeded()
@@ -170,6 +186,6 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
+        return 55
     }
 }
