@@ -9,7 +9,7 @@ import UIKit
 import AVFoundation
 import Clarifai_Apple_SDK
 
-class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewDataSource, UITableViewDelegate {
+class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate {
     @IBOutlet weak var conceptTextField: UITextField!
     @IBOutlet weak var settingsButton: UIButton!
     @IBOutlet weak var shutterButton: UIButton!
@@ -22,6 +22,7 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     var generalModel: Model!
     var generalModelIsReady = false
     var isProcessingImage = false
+    var isFreezeFrame = false
     var predictions: [Concept] = []
 
     override func viewWillAppear(_ animated: Bool) {
@@ -35,9 +36,7 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleKeyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleKeyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleModelDidBecomeAvailable(notification:)), name: NSNotification.Name.CAIModelDidBecomeAvailable, object: nil)
-
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleImageProcessingDidComplete(notification:)), name: ImageProcessingDidFinish, object: nil)
-
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.viewDidRotate(notification:)), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
 
         // Begin extracting video frames to predict on
@@ -67,9 +66,12 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         predictionsTableView.register(cellNib, forCellReuseIdentifier: "PredictionCell")
 
         showAllConceptsButton.layer.cornerRadius = 2.0
+
+        conceptTextField.delegate = self
     }
 
     @objc func viewDidRotate(notification: Notification) {
+        // Ensure the video preview feed also rotates with device
         DispatchQueue.main.async {
             let statusBarOrientation = UIApplication.shared.statusBarOrientation
             var initialVideoOrientation: AVCaptureVideoOrientation = .portrait
@@ -83,13 +85,13 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         }
     }
 
-    func captured(image: UIImage) {
-        // guard generalModelIsReady else { return } TODO: Uncomment when SDK properly loads general model
+    // MARK: FrameExtractorDelegate Methods
+    func capturedVideoFrame(image: UIImage) {
+        guard generalModelIsReady else { return }
 
         if isProcessingImage {
             return
         }
-
         isProcessingImage = true;
 
         let dataAsset = DataAsset.init(image: Image.init(image: image))
@@ -120,6 +122,11 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         }
     }
 
+    func capturedImage(image: UIImage) {
+        // train model with new image and concept.
+        print("welwle")
+    }
+
     override func viewWillLayoutSubviews() {
         super.updateViewConstraints()
         self.predictionsTableHeight?.constant = self.predictionsTableView.contentSize.height
@@ -129,6 +136,7 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     }
 
     func filterConcepts(concepts: [Concept]) -> [Concept] {
+        // Remove any unwanted concepts
         let filteredConcepts = concepts.filter { (concept) -> Bool in
             if concept.name == "no person" {
                 return false
@@ -148,7 +156,7 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         if let userInfo = notification.userInfo {
             let modelId = userInfo[CAIModelUniqueIdentifierKey] as? String
             if modelId == "aaa03c23b3724a16a56b629203edc62c" {
-                generalModelIsReady = true //TODO: will change this when sdk bug fixed
+                generalModelIsReady = true
             }
         }
     }
@@ -156,8 +164,8 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     // MARK: NotificationHandlers
     @objc func handleKeyboardWillHide(notification: Notification) {
         conceptTextField.alpha = 0
-        //        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-        //        }
+        frameExtractor.startFrameExtraction()
+
     }
 
     @objc func handleKeyboardWillShow(notification: Notification) {
@@ -165,12 +173,21 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         UIView.animate(withDuration: 0.4) {
             self.conceptTextField.alpha = 1
         }
-//        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-//        }
+        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+            conceptTextField.frame = CGRect(x: conceptTextField.frame.origin.x, y: keyboardSize.height, width: conceptTextField.frame.width, height: conceptTextField.frame.height)
+        }
     }
 
     @IBAction func addConcept(_ sender: AnyObject) {
         conceptTextField.becomeFirstResponder();
+
+        // pause video feed and grab current frame (or better yet 3-5 frames)
+        frameExtractor.beginCaptureImage()
+        frameExtractor.stopFrameExtraction()
+    }
+
+    func trainNewConcept(concept: Concept) {
+        // get current frame as uiimage, convety to
     }
 
     // MARK: UITableViewDataSource
@@ -187,5 +204,15 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 55
+    }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        conceptTextField.resignFirstResponder()
+
+        if let text = textField.text {
+            let newConcept = Concept(id: text, name: text, score: 1.0)
+            trainNewConcept(concept: newConcept)
+        }
+        return true
     }
 }

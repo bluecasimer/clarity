@@ -10,16 +10,19 @@ import UIKit
 import AVFoundation
 
 protocol FrameExtractorDelegate: class {
-    func captured(image: UIImage)
+    func capturedVideoFrame(image: UIImage)
+    func capturedImage(image:UIImage)
 }
 
-class FrameExtractor: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
+class FrameExtractor: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVCapturePhotoCaptureDelegate {
     private let position = AVCaptureDevice.Position.front
     private let quality = AVCaptureSession.Preset.medium
     private var permissionGranted = false
     private let sessionQueue = DispatchQueue(label: "session queue")
     let captureSession = AVCaptureSession()
     private let context = CIContext()
+    private var configured = false
+    private var photoOutput = AVCapturePhotoOutput()
 
     weak var delegate: FrameExtractorDelegate?
 
@@ -27,7 +30,7 @@ class FrameExtractor: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         super.init()
         checkPermission()
         sessionQueue.async { [unowned self] in
-            self.configureSession()
+            self.configured = self.configureSession()
             self.captureSession.startRunning()
         }
     }
@@ -52,32 +55,37 @@ class FrameExtractor: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         }
     }
 
-    private func configureSession() {
-        guard permissionGranted else { return }
+    private func configureSession() -> Bool {
+        guard permissionGranted else { return false }
 
         // Set up capture session and add video input
         captureSession.sessionPreset = quality
-        guard let captureDevice = selectCaptureDevice() else { return }
+        guard let captureDevice = selectCaptureDevice() else { return false }
 
-        guard let captureDeviceInput = try? AVCaptureDeviceInput(device: captureDevice) else { return }
+        guard let captureDeviceInput = try? AVCaptureDeviceInput(device: captureDevice) else { return false }
 
         if captureSession.canAddInput(captureDeviceInput) {
             captureSession.addInput(captureDeviceInput)
         } else {
             print("Could not add video device input to the session")
-            return
+            return false
         }
 
         // Set up AVCaptureVideoDataOutput for frame extraction.
         let videoOutput = AVCaptureVideoDataOutput()
         videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "sample buffer"))
-        guard captureSession.canAddOutput(videoOutput) else { return }
+        guard captureSession.canAddOutput(videoOutput) else { return false }
         captureSession.addOutput(videoOutput)
-        guard let connection = videoOutput.connection(with: AVFoundation.AVMediaType.video) else { return }
-        guard connection.isVideoOrientationSupported else { return }
-        guard connection.isVideoMirroringSupported else { return }
+        guard let connection = videoOutput.connection(with: AVFoundation.AVMediaType.video) else { return false }
+        guard connection.isVideoOrientationSupported else { return false }
+        guard connection.isVideoMirroringSupported else { return false }
         connection.videoOrientation = .portrait
         connection.isVideoMirrored = position == .front
+
+        guard captureSession.canAddOutput(photoOutput) else { return false }
+        captureSession.addOutput(photoOutput)
+
+        return true
     }
 
     private func selectCaptureDevice() -> AVCaptureDevice? {
@@ -100,11 +108,53 @@ class FrameExtractor: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         return UIImage(cgImage: cgImage)
     }
 
+    func stopFrameExtraction() {
+        if !configured {
+            return
+        }
+        sessionQueue.async { [unowned self] in
+            self.captureSession.stopRunning()
+        }
+    }
+
+    func startFrameExtraction() {
+        if !configured {
+            return
+        }
+        sessionQueue.async { [unowned self] in
+            self.captureSession.startRunning()
+        }
+    }
+
+    func beginCaptureImage() {
+        let photoSettings = AVCapturePhotoSettings()
+        self.photoOutput.capturePhoto(with: photoSettings, delegate: self)
+    }
+
     // MARK: AVCaptureVideoDataOutputSampleBufferDelegate
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let image = imageFromSampleBuffer(sampleBuffer: sampleBuffer) else { return }
         DispatchQueue.main.async { [unowned self] in
-            self.delegate?.captured(image: image)
+            self.delegate?.capturedVideoFrame(image: image)
+        }
+    }
+
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        if let error = error {
+            print(error)
+            return
+        }
+
+        // Only need preview size for Clarifai to work effectively.
+        if let pixelBuffer = photo.previewPixelBuffer {
+            let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+            guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return }
+            let image = UIImage(cgImage: cgImage)
+            DispatchQueue.main.async { [unowned self] in
+                self.delegate?.capturedImage(image: image)
+            }
+        } else {
+            print("Failed to capture image.")
         }
     }
 }
