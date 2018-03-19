@@ -17,8 +17,11 @@
 		EB19CF36203223B800FC7658 /* FrameExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB19CF35203223B800FC7658 /* FrameExtractor.swift */; };
 		EB1A99592040A632008795AB /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1A99582040A632008795AB /* Constants.swift */; };
 		EB1F3915202E31F60084F7AA /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1F3914202E31F60084F7AA /* PreviewView.swift */; };
+		EBC50A64205B5C6300E044F3 /* Prediction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBC50A63205B5C6300E044F3 /* Prediction.swift */; };
 		EBD343BA204A0DF90030DE76 /* PredictionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD343B8204A0DF90030DE76 /* PredictionTableViewCell.swift */; };
 		EBD343BB204A0DF90030DE76 /* PredictionTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = EBD343B9204A0DF90030DE76 /* PredictionTableViewCell.xib */; };
+		EBF568F12060798C0024F6A8 /* CustomPredictionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBF568EF2060798C0024F6A8 /* CustomPredictionTableViewCell.swift */; };
+		EBF568F22060798C0024F6A8 /* CustomPredictionTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = EBF568F02060798C0024F6A8 /* CustomPredictionTableViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,8 +40,11 @@
 		EB19CF35203223B800FC7658 /* FrameExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameExtractor.swift; sourceTree = "<group>"; };
 		EB1A99582040A632008795AB /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		EB1F3914202E31F60084F7AA /* PreviewView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
+		EBC50A63205B5C6300E044F3 /* Prediction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prediction.swift; sourceTree = "<group>"; };
 		EBD343B8204A0DF90030DE76 /* PredictionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionTableViewCell.swift; sourceTree = "<group>"; };
 		EBD343B9204A0DF90030DE76 /* PredictionTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PredictionTableViewCell.xib; sourceTree = "<group>"; };
+		EBF568EF2060798C0024F6A8 /* CustomPredictionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPredictionTableViewCell.swift; sourceTree = "<group>"; };
+		EBF568F02060798C0024F6A8 /* CustomPredictionTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomPredictionTableViewCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,8 +93,11 @@
 				EB1A99582040A632008795AB /* Constants.swift */,
 				EB1F3914202E31F60084F7AA /* PreviewView.swift */,
 				C9225404201120FF00CC6302 /* MainViewController.swift */,
+				EBC50A63205B5C6300E044F3 /* Prediction.swift */,
 				EBD343B8204A0DF90030DE76 /* PredictionTableViewCell.swift */,
 				EBD343B9204A0DF90030DE76 /* PredictionTableViewCell.xib */,
+				EBF568EF2060798C0024F6A8 /* CustomPredictionTableViewCell.swift */,
+				EBF568F02060798C0024F6A8 /* CustomPredictionTableViewCell.xib */,
 				EB19CF35203223B800FC7658 /* FrameExtractor.swift */,
 				C922541520112B9100CC6302 /* SettingsViewController.swift */,
 				C9225406201120FF00CC6302 /* Main.storyboard */,
@@ -181,6 +190,7 @@
 				EBD343BB204A0DF90030DE76 /* PredictionTableViewCell.xib in Resources */,
 				C922540D201120FF00CC6302 /* LaunchScreen.storyboard in Resources */,
 				C922540A201120FF00CC6302 /* Assets.xcassets in Resources */,
+				EBF568F22060798C0024F6A8 /* CustomPredictionTableViewCell.xib in Resources */,
 				C9225408201120FF00CC6302 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -249,7 +259,9 @@
 				C9225405201120FF00CC6302 /* MainViewController.swift in Sources */,
 				EB1F3915202E31F60084F7AA /* PreviewView.swift in Sources */,
 				C9225403201120FF00CC6302 /* AppDelegate.swift in Sources */,
+				EBC50A64205B5C6300E044F3 /* Prediction.swift in Sources */,
 				C922541620112B9100CC6302 /* SettingsViewController.swift in Sources */,
+				EBF568F12060798C0024F6A8 /* CustomPredictionTableViewCell.swift in Sources */,
 				EBD343BA204A0DF90030DE76 /* PredictionTableViewCell.swift in Sources */,
 				EB19CF36203223B800FC7658 /* FrameExtractor.swift in Sources */,
 				EB1A99592040A632008795AB /* Constants.swift in Sources */,

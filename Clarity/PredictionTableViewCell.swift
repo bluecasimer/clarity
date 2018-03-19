@@ -48,7 +48,6 @@ class PredictionTableViewCell: UITableViewCell {
         self.contentView.bringSubview(toFront: scoreLabel)
         self.contentView.bringSubview(toFront: nameLabel)
         self.contentView.sendSubview(toBack: backgroundPadView)
-
     }
 
 }

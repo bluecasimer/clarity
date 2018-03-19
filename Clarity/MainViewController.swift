@@ -23,7 +23,10 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     var generalModelIsReady = false
     var isProcessingImage = false
     var isFreezeFrame = false
-    var predictions: [Concept] = []
+    var generalPredictions: [Concept] = []
+    var customPredictions: [Concept] = []
+    var lastCapturedFrame: UIImage?
+    var customModels: [Model] = []
 
     override func viewWillAppear(_ animated: Bool) {
         conceptTextField.isHidden = true
@@ -58,12 +61,21 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         }
 
         generalModel = Clarifai.sharedInstance().generalModel
+        // won't load general model without calling predict...
+        let image = UIImage()
+        let dataAsset = DataAsset(image: Image(image: image))
+        let input =  Input(dataAsset: dataAsset)
+        generalModel.predict([input]) { (output, error) in
+            print("WORKES?!!")
+        }
 
         predictionsTableView.dataSource = self          
         predictionsTableView.delegate = self
 
         let cellNib = UINib(nibName: "PredictionTableViewCell", bundle: nil)
         predictionsTableView.register(cellNib, forCellReuseIdentifier: "PredictionCell")
+        let customCellNib = UINib(nibName: "CustomPredictionTableViewCell", bundle: nil)
+        predictionsTableView.register(customCellNib, forCellReuseIdentifier: "CustomPredictionCell")
 
         showAllConceptsButton.layer.cornerRadius = 2.0
 
@@ -94,37 +106,98 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         }
         isProcessingImage = true;
 
+        lastCapturedFrame = image
+
         let dataAsset = DataAsset.init(image: Image.init(image: image))
         let input = Input.init(dataAsset: dataAsset)
 
+        // Add predictions from Clarifai's General model
         generalModel.predict([input]) { (outputs, error) in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                NotificationCenter.default.post(name: ImageProcessingDidFinish, object: self)
-            }
-
             if error != nil {
                 print(error.debugDescription)
                 return
             }
 
             if let output:Output = outputs?[0] {
-                // update table view with new predicted concepts
+                // Update table view data with new predicted concepts
                 guard let concepts = output.dataAsset.concepts else { return }
-                self.predictions = Array(self.filterConcepts(concepts:concepts).prefix(5))
-                let range = NSMakeRange(0, self.predictionsTableView.numberOfSections)
-                let sections = NSIndexSet(indexesIn: range)
-                self.predictionsTableView.reloadSections(sections as IndexSet, with: .none)
-                self.predictionsTableHeight?.constant = self.predictionsTableView.contentSize.height
-                UIView.animate(withDuration: 0.4) {
-                    self.view.layoutIfNeeded()
+                let filteredConcepts = Array(self.filterConcepts(concepts:concepts).prefix(5))
+                self.generalPredictions = filteredConcepts
+            }
+        }
+
+        // Also add predictions from custom trained models, if any.
+        if customModels.isEmpty {
+            self.reloadAllPredictions()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                NotificationCenter.default.post(name: ImageProcessingDidFinish, object: self)
+            }
+        }
+
+        var remainingPredictions = 0
+        for model in customModels {
+            remainingPredictions += 1
+            model.predict([input]) { (outputs, error) in
+                if error != nil {
+                    print(error.debugDescription)
+                    return
+                }
+
+                if let output:Output = outputs?[0] {
+                    // Update table view data with new predicted concepts.
+                    guard let concepts = output.dataAsset.concepts else { return }
+                    self.addCustomPredictions(predictions: concepts)
+                }
+
+                // After all predictions have completed, image processing is complete.
+                remainingPredictions -= 1
+                if remainingPredictions == 0 {
+                    self.reloadAllPredictions()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                        NotificationCenter.default.post(name: ImageProcessingDidFinish, object: self)
+                    }
                 }
             }
         }
     }
 
-    func capturedImage(image: UIImage) {
-        // train model with new image and concept.
-        print("welwle")
+    func addCustomPredictions(predictions: [Concept]) {
+        // Only display custom predictions if above 0.7 accuracy score.
+        let customThreshold: Float = 0.7
+        for prediction in predictions {
+            if prediction.score < customThreshold {
+                // Score is less than threshold, so remove from table data if necessary.
+                self.customPredictions = self.customPredictions.filter({ (concept) -> Bool in
+                    if concept.id == prediction.id {
+                        return false
+                    } else {
+                        return true
+                    }
+                })
+            } else {
+                // Replace with new accuracy score, or insert into table view data.
+                if let i = self.customPredictions.index(where: { (concept) -> Bool in
+                    return concept.id == prediction.id
+                }) {
+                    self.customPredictions[i] = prediction
+                } else {
+                    self.customPredictions.append(prediction)
+                    self.customPredictions.sort(by: { (concept1, concept2) -> Bool in
+                        return concept1.score >= concept2.score
+                    })
+                }
+            }
+        }
+    }
+
+    func reloadAllPredictions() {
+        let range = NSMakeRange(0, 2)
+        let sections = NSIndexSet(indexesIn: range)
+        self.predictionsTableView.reloadSections(sections as IndexSet, with: .none)
+        self.predictionsTableHeight?.constant = self.predictionsTableView.contentSize.height
+        UIView.animate(withDuration: 0.4) {
+            self.view.layoutIfNeeded()
+        }
     }
 
     override func viewWillLayoutSubviews() {
@@ -179,40 +252,74 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     }
 
     @IBAction func addConcept(_ sender: AnyObject) {
+        guard lastCapturedFrame != nil else { return }
+
         conceptTextField.becomeFirstResponder();
 
-        // pause video feed and grab current frame (or better yet 3-5 frames)
-        frameExtractor.beginCaptureImage()
+        // pause video preview
         frameExtractor.stopFrameExtraction()
     }
 
-    func trainNewConcept(concept: Concept) {
-        // get current frame as uiimage, convety to
-    }
-
-    // MARK: UITableViewDataSource
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return predictions.count
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "PredictionCell") as! PredictionTableViewCell
-        cell.nameLabel.text = predictions[indexPath.row].name
-        cell.setScoreValue(score: predictions[indexPath.row].score)
-        return cell
-    }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 55
-    }
-
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        guard lastCapturedFrame != nil else { return true }
         conceptTextField.resignFirstResponder()
 
         if let text = textField.text {
             let newConcept = Concept(id: text, name: text, score: 1.0)
-            trainNewConcept(concept: newConcept)
+            let dataAsset = DataAsset(image: Image(image: lastCapturedFrame))
+            dataAsset.add(concepts: [newConcept])
+            let input = Input(dataAsset: dataAsset)
+            trainNewModelForConcept(concept: newConcept, withInputs: [input])
         }
         return true
+    }
+
+    func trainNewModelForConcept(concept: Concept, withInputs inputs: [Input]) {
+        let model = Model(id: concept.name, name: concept.name)
+        model.train(concepts: [concept], inputs: inputs) { (error) in
+            self.customModels.append(model)
+        }
+    }
+
+    // MARK: UITableViewDataSource
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        switch section {
+        case 0:
+            return min(3,customPredictions.count)
+        case 1:
+            return min(5-customPredictions.count,generalPredictions.count)
+        default:
+            return 0
+        }
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+
+
+        switch indexPath.section {
+        case 0:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "CustomPredictionCell") as! CustomPredictionTableViewCell
+            let prediction = customPredictions[indexPath.row]
+            cell.nameLabel.text = prediction.name
+            cell.setScoreValue(score: prediction.score)
+            return cell
+        case 1:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "PredictionCell") as! PredictionTableViewCell
+            let prediction = generalPredictions[indexPath.row]
+            cell.nameLabel.text = prediction.name
+            cell.setScoreValue(score: prediction.score)
+            return cell
+        default:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "PredictionCell") as! PredictionTableViewCell
+            return cell
+        }
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 55
     }
 }

@@ -11,7 +11,6 @@ import AVFoundation
 
 protocol FrameExtractorDelegate: class {
     func capturedVideoFrame(image: UIImage)
-    func capturedImage(image:UIImage)
 }
 
 class FrameExtractor: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVCapturePhotoCaptureDelegate {
@@ -22,8 +21,6 @@ class FrameExtractor: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
     let captureSession = AVCaptureSession()
     private let context = CIContext()
     private var configured = false
-    private var photoOutput = AVCapturePhotoOutput()
-
     weak var delegate: FrameExtractorDelegate?
 
     override init() {
@@ -81,10 +78,6 @@ class FrameExtractor: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
         guard connection.isVideoMirroringSupported else { return false }
         connection.videoOrientation = .portrait
         connection.isVideoMirrored = position == .front
-
-        guard captureSession.canAddOutput(photoOutput) else { return false }
-        captureSession.addOutput(photoOutput)
-
         return true
     }
 
@@ -126,35 +119,11 @@ class FrameExtractor: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
         }
     }
 
-    func beginCaptureImage() {
-        let photoSettings = AVCapturePhotoSettings()
-        self.photoOutput.capturePhoto(with: photoSettings, delegate: self)
-    }
-
     // MARK: AVCaptureVideoDataOutputSampleBufferDelegate
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let image = imageFromSampleBuffer(sampleBuffer: sampleBuffer) else { return }
         DispatchQueue.main.async { [unowned self] in
             self.delegate?.capturedVideoFrame(image: image)
-        }
-    }
-
-    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-        if let error = error {
-            print(error)
-            return
-        }
-
-        // Only need preview size for Clarifai to work effectively.
-        if let pixelBuffer = photo.previewPixelBuffer {
-            let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
-            guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return }
-            let image = UIImage(cgImage: cgImage)
-            DispatchQueue.main.async { [unowned self] in
-                self.delegate?.capturedImage(image: image)
-            }
-        } else {
-            print("Failed to capture image.")
         }
     }
 }

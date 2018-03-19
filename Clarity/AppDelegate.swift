@@ -17,4 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         return true
     }
+
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        //Clarifai.sharedInstance().start(apiKey: "d7ca388538f04fb3927bad7b015a7653")
+    }
 }
