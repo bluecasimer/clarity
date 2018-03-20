@@ -21,7 +21,8 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     var frameExtractor: FrameExtractor!
     var generalModel: Model!
     var generalModelIsReady = false
-    var isProcessingImage = false
+    var predictingWithGeneralModel = false
+    var predictingWithCustomModels = false
     var isFreezeFrame = false
     var generalPredictions: [Concept] = []
     var customPredictions: [Concept] = []
@@ -39,7 +40,8 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleKeyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleKeyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleModelDidBecomeAvailable(notification:)), name: NSNotification.Name.CAIModelDidBecomeAvailable, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleImageProcessingDidComplete(notification:)), name: ImageProcessingDidFinish, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleGeneralImageProcessingDidComplete(notification:)), name: GeneralImageProcessingDidFinish, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleCustomImageProcessingDidComplete(notification:)), name: CustomImageProcessingDidFinish, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.viewDidRotate(notification:)), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
 
         // Begin extracting video frames to predict on
@@ -101,19 +103,27 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     // MARK: FrameExtractorDelegate Methods
     func capturedVideoFrame(image: UIImage) {
         guard generalModelIsReady else { return }
-
-        if isProcessingImage {
-            return
-        }
-        isProcessingImage = true;
-
         lastCapturedFrame = image
 
         let dataAsset = DataAsset.init(image: Image.init(image: image))
         let input = Input.init(dataAsset: dataAsset)
+        predictWithGeneralModel(input: input)
+        predictWithCustomModels(input: input)
+    }
+
+    // MARK: Predicting with Clarifai models
+    func predictWithGeneralModel(input: Input) {
+        if predictingWithGeneralModel {
+            return
+        }
+        predictingWithGeneralModel = true
 
         // Add predictions from Clarifai's General model
         generalModel.predict([input]) { (outputs, error) in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
+                NotificationCenter.default.post(name: GeneralImageProcessingDidFinish, object: self)
+            }
+
             if error != nil {
                 print(error.debugDescription)
                 return
@@ -124,14 +134,21 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
                 guard let concepts = output.dataAsset.concepts else { return }
                 let filteredConcepts = Array(self.filterConcepts(concepts:concepts).prefix(5))
                 self.generalPredictions = filteredConcepts
+                self.reloadAllPredictions()
             }
         }
+    }
 
-        // Also add predictions from custom trained models, if any.
+    func predictWithCustomModels(input: Input) {
+        if predictingWithCustomModels {
+            return
+        }
+        predictingWithCustomModels = true;
+
         if customModels.isEmpty {
             self.reloadAllPredictions()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                NotificationCenter.default.post(name: ImageProcessingDidFinish, object: self)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
+                NotificationCenter.default.post(name: CustomImageProcessingDidFinish, object: self)
             }
         }
 
@@ -154,8 +171,8 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
                 remainingPredictions -= 1
                 if remainingPredictions == 0 {
                     self.reloadAllPredictions()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                        NotificationCenter.default.post(name: ImageProcessingDidFinish, object: self)
+                    DispatchQueue.main.asyncAfter(deadline: .now()) {
+                        NotificationCenter.default.post(name: CustomImageProcessingDidFinish, object: self)
                     }
                 }
             }
@@ -228,8 +245,12 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         return filteredConcepts
     }
 
-    @objc func handleImageProcessingDidComplete(notification: Notification) {
-        isProcessingImage = false;
+    @objc func handleGeneralImageProcessingDidComplete(notification: Notification) {
+        predictingWithGeneralModel = false;
+    }
+
+    @objc func handleCustomImageProcessingDidComplete(notification: Notification) {
+        predictingWithCustomModels = false;
     }
 
     @objc func handleModelDidBecomeAvailable(notification: Notification) {

@@ -9,7 +9,8 @@
 import Foundation
 import UIKit
 
-let ImageProcessingDidFinish: Notification.Name = Notification.Name("ImageProcessingDidFinish")
+let GeneralImageProcessingDidFinish: Notification.Name = Notification.Name("GeneralImageProcessingDidFinish")
+let CustomImageProcessingDidFinish: Notification.Name = Notification.Name("CustomImageProcessingDidFinish")
 
 let ScoreColorGreen: UIColor = UIColor(red: 36.0/255.0, green: 179.0/255.0, blue: 107.0/255.0, alpha: 1.0)
 let ScoreColorRed: UIColor = UIColor(red: 217.0/255.0, green: 58.0/255.0, blue: 0.0/255.0, alpha: 1.0)
