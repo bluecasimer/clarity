@@ -69,9 +69,10 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
             print("WORKES?!!")
         }
 
+        loadSavedModels()
+
         predictionsTableView.dataSource = self          
         predictionsTableView.delegate = self
-
         let cellNib = UINib(nibName: "PredictionTableViewCell", bundle: nil)
         predictionsTableView.register(cellNib, forCellReuseIdentifier: "PredictionCell")
         let customCellNib = UINib(nibName: "CustomPredictionTableViewCell", bundle: nil)
@@ -200,6 +201,12 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         }
     }
 
+    func loadSavedModels() {
+        Clarifai.sharedInstance().load(entityType: EntityType.model, range: NSMakeRange(0,Int.max)) { (models, error) in
+            self.customModels = models as! [Model]
+        }
+    }
+
     override func viewWillLayoutSubviews() {
         super.updateViewConstraints()
         self.predictionsTableHeight?.constant = self.predictionsTableView.contentSize.height
@@ -278,6 +285,7 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         let model = Model(id: concept.name, name: concept.name)
         model.train(concepts: [concept], inputs: inputs) { (error) in
             self.customModels.append(model)
+            Clarifai.sharedInstance().save(entities: [model])
         }
     }
 
@@ -291,15 +299,13 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         case 0:
             return min(3,customPredictions.count)
         case 1:
-            return min(5-customPredictions.count,generalPredictions.count)
+            return min(5-min(3,customPredictions.count),generalPredictions.count)
         default:
             return 0
         }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
-
         switch indexPath.section {
         case 0:
             let cell = tableView.dequeueReusableCell(withIdentifier: "CustomPredictionCell") as! CustomPredictionTableViewCell
