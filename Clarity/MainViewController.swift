@@ -21,8 +21,7 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     var frameExtractor: FrameExtractor!
     var generalModel: Model!
     var generalModelIsReady = false
-    var predictingWithGeneralModel = false
-    var predictingWithCustomModels = false
+    var isProcessingImage = false
     var isFreezeFrame = false
     var generalPredictions: [Concept] = []
     var customPredictions: [Concept] = []
@@ -40,8 +39,7 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleKeyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleKeyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleModelDidBecomeAvailable(notification:)), name: NSNotification.Name.CAIModelDidBecomeAvailable, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleGeneralImageProcessingDidComplete(notification:)), name: GeneralImageProcessingDidFinish, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleCustomImageProcessingDidComplete(notification:)), name: CustomImageProcessingDidFinish, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleImageProcessingDidComplete(notification:)), name: ImageProcessingDidFinish, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.viewDidRotate(notification:)), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
 
         // Begin extracting video frames to predict on
@@ -105,6 +103,11 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         guard generalModelIsReady else { return }
         lastCapturedFrame = image
 
+        if isProcessingImage {
+            return
+        }
+        isProcessingImage = true;
+
         let dataAsset = DataAsset.init(image: Image.init(image: image))
         let input = Input.init(dataAsset: dataAsset)
         predictWithGeneralModel(input: input)
@@ -113,17 +116,8 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
 
     // MARK: Predicting with Clarifai models
     func predictWithGeneralModel(input: Input) {
-        if predictingWithGeneralModel {
-            return
-        }
-        predictingWithGeneralModel = true
-
         // Add predictions from Clarifai's General model
         generalModel.predict([input]) { (outputs, error) in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
-                NotificationCenter.default.post(name: GeneralImageProcessingDidFinish, object: self)
-            }
-
             if error != nil {
                 print(error.debugDescription)
                 return
@@ -140,15 +134,10 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     }
 
     func predictWithCustomModels(input: Input) {
-        if predictingWithCustomModels {
-            return
-        }
-        predictingWithCustomModels = true;
-
         if customModels.isEmpty {
             self.reloadAllPredictions()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
-                NotificationCenter.default.post(name: CustomImageProcessingDidFinish, object: self)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                NotificationCenter.default.post(name: ImageProcessingDidFinish, object: self)
             }
         }
 
@@ -156,11 +145,12 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
 
         // Optimize by calculating embeddings first before predicting.
         input.dataAsset.embeddings { (embeddings) in
-            // Optimization: no need to store the photo after embedding stored.
+            // No need to store the photo after embedding saved.
             input.dataAsset.image.image = nil
 
             for model in self.customModels {
                 remainingPredictions += 1
+
                 model.predict([input]) { (outputs, error) in
                     if error != nil {
                         print(error.debugDescription)
@@ -177,8 +167,8 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
                     remainingPredictions -= 1
                     if remainingPredictions == 0 {
                         self.reloadAllPredictions()
-                        DispatchQueue.main.asyncAfter(deadline: .now()) {
-                            NotificationCenter.default.post(name: CustomImageProcessingDidFinish, object: self)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            NotificationCenter.default.post(name: ImageProcessingDidFinish, object: self)
                         }
                     }
                 }
@@ -254,12 +244,8 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         return filteredConcepts
     }
 
-    @objc func handleGeneralImageProcessingDidComplete(notification: Notification) {
-        predictingWithGeneralModel = false;
-    }
-
-    @objc func handleCustomImageProcessingDidComplete(notification: Notification) {
-        predictingWithCustomModels = false;
+    @objc func handleImageProcessingDidComplete(notification: Notification) {
+        isProcessingImage = false;
     }
 
     @objc func handleModelDidBecomeAvailable(notification: Notification) {
