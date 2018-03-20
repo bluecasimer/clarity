@@ -29,13 +29,13 @@ class PredictionTableViewCell: UITableViewCell {
     func setScoreValue(score: Float) {
         if (score >= 0.9) {
             // green color
-            self.scoreLabel.textColor = ScoreColorGreen
+            self.scoreLabel.textColor = UIColor.scoreColorGreen()
         } else if score < 0.6 {
             // red color
-            self.scoreLabel.textColor = ScoreColorRed
+            self.scoreLabel.textColor = UIColor.scoreColorRed()
         } else {
             // yellow color
-            self.scoreLabel.textColor = ScoreColorYellow
+            self.scoreLabel.textColor = UIColor.scoreColorYellow()
         }
 
         let scoreText = String(format: "%.3f", score)

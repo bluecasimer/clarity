@@ -22,11 +22,11 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     var generalModel: Model!
     var generalModelIsReady = false
     var isProcessingImage = false
-    var isFreezeFrame = false
+    var customModels: [Model] = []
     var generalPredictions: [Concept] = []
     var customPredictions: [Concept] = []
     var lastCapturedFrame: UIImage?
-    var customModels: [Model] = []
+    let customThreshold: Float = 0.7
 
     override func viewWillAppear(_ animated: Bool) {
         conceptTextField.isHidden = true
@@ -61,14 +61,14 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         }
 
         generalModel = Clarifai.sharedInstance().generalModel
-        // won't load general model without calling predict...
+        // won't load general model without initiating call to predict...
         let image = UIImage()
         let dataAsset = DataAsset(image: Image(image: image))
         let input =  Input(dataAsset: dataAsset)
         generalModel.predict([input]) { (output, error) in
-            print("WORKES?!!")
         }
 
+        // Load any previously trained custom models
         loadSavedModels()
 
         predictionsTableView.dataSource = self          
@@ -79,8 +79,15 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         predictionsTableView.register(customCellNib, forCellReuseIdentifier: "CustomPredictionCell")
 
         showAllConceptsButton.layer.cornerRadius = 2.0
-
         conceptTextField.delegate = self
+    }
+
+    override func viewWillLayoutSubviews() {
+        super.updateViewConstraints()
+        self.predictionsTableHeight?.constant = self.predictionsTableView.contentSize.height
+        UIView.animate(withDuration: 0.4) {
+            self.view.layoutIfNeeded()
+        }
     }
 
     @objc func viewDidRotate(notification: Notification) {
@@ -143,11 +150,8 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
 
         var remainingPredictions = 0
 
-        // Optimize by calculating embeddings first before predicting.
+        // Optimize by calculating embeddings once before predicting with all custom models
         input.dataAsset.embeddings { (embeddings) in
-            // No need to store the photo after embedding saved.
-            input.dataAsset.image.image = nil
-
             for model in self.customModels {
                 remainingPredictions += 1
 
@@ -158,12 +162,12 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
                     }
 
                     if let output:Output = outputs?[0] {
-                        // Update table view data with new predicted concepts.
+                        // Update table view data with new predicted concepts
                         guard let concepts = output.dataAsset.concepts else { return }
                         self.addCustomPredictions(predictions: concepts)
                     }
 
-                    // After all predictions have completed, image processing is complete.
+                    // After all predictions have completed, image processing is complete
                     remainingPredictions -= 1
                     if remainingPredictions == 0 {
                         self.reloadAllPredictions()
@@ -178,11 +182,10 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
 
     func addCustomPredictions(predictions: [Concept]) {
         DispatchQueue.main.async {
-            // Only display custom predictions if above 0.7 accuracy score.
-            let customThreshold: Float = 0.7
+            // Only display custom predictions if above accuracy score
             for prediction in predictions {
-                if prediction.score < customThreshold {
-                    // Score is less than threshold, so remove from table data if necessary.
+                if prediction.score < self.customThreshold {
+                    // Score is less than threshold, so remove from table data if necessary
                     self.customPredictions = self.customPredictions.filter({ (concept) -> Bool in
                         if concept.id == prediction.id {
                             return false
@@ -191,11 +194,14 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
                         }
                     })
                 } else {
-                    // Replace with new accuracy score, or insert into table view data.
+                    // Replace with new accuracy score, or insert into table view data
                     if let i = self.customPredictions.index(where: { (concept) -> Bool in
                         return concept.id == prediction.id
                     }) {
                         self.customPredictions[i] = prediction
+                        self.customPredictions.sort(by: { (concept1, concept2) -> Bool in
+                            return concept1.score >= concept2.score
+                        })
                     } else {
                         self.customPredictions.append(prediction)
                         self.customPredictions.sort(by: { (concept1, concept2) -> Bool in
@@ -217,20 +223,6 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         }
     }
 
-    func loadSavedModels() {
-        Clarifai.sharedInstance().load(entityType: EntityType.model, range: NSMakeRange(0,Int.max)) { (models, error) in
-            self.customModels = models as! [Model]
-        }
-    }
-
-    override func viewWillLayoutSubviews() {
-        super.updateViewConstraints()
-        self.predictionsTableHeight?.constant = self.predictionsTableView.contentSize.height
-        UIView.animate(withDuration: 0.4) {
-            self.view.layoutIfNeeded()
-        }
-    }
-
     func filterConcepts(concepts: [Concept]) -> [Concept] {
         // Remove any unwanted concepts
         let filteredConcepts = concepts.filter { (concept) -> Bool in
@@ -244,36 +236,17 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         return filteredConcepts
     }
 
-    @objc func handleImageProcessingDidComplete(notification: Notification) {
-        isProcessingImage = false;
-    }
-
-    @objc func handleModelDidBecomeAvailable(notification: Notification) {
-        if let userInfo = notification.userInfo {
-            let modelId = userInfo[CAIModelUniqueIdentifierKey] as? String
-            if modelId == "aaa03c23b3724a16a56b629203edc62c" {
-                generalModelIsReady = true
+    func loadSavedModels() {
+        Clarifai.sharedInstance().load(entityType: EntityType.model, range: NSMakeRange(0,Int.max)) { (models, error) in
+            if error != nil {
+                print(error.debugDescription)
+                return
             }
+            self.customModels = models as! [Model]
         }
     }
 
-    // MARK: NotificationHandlers
-    @objc func handleKeyboardWillHide(notification: Notification) {
-        conceptTextField.alpha = 0
-        frameExtractor.startFrameExtraction()
-
-    }
-
-    @objc func handleKeyboardWillShow(notification: Notification) {
-        conceptTextField.isHidden = false 
-        UIView.animate(withDuration: 0.4) {
-            self.conceptTextField.alpha = 1
-        }
-        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-            conceptTextField.frame = CGRect(x: conceptTextField.frame.origin.x, y: keyboardSize.height, width: conceptTextField.frame.width, height: conceptTextField.frame.height)
-        }
-    }
-
+    // MARK: Custom training Clarifai Models
     @IBAction func addConcept(_ sender: AnyObject) {
         guard lastCapturedFrame != nil else { return }
 
@@ -283,6 +256,15 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         frameExtractor.stopFrameExtraction()
     }
 
+    func trainNewModelForConcept(concept: Concept, withInputs inputs: [Input]) {
+        let model = Model(id: concept.name, name: concept.name)
+        model.train(concepts: [concept], inputs: inputs) { (error) in
+            self.customModels.append(model)
+            Clarifai.sharedInstance().save(entities: [model])
+        }
+    }
+
+    // MARK: UITextField delegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         guard lastCapturedFrame != nil else { return true }
         conceptTextField.resignFirstResponder()
@@ -297,11 +279,33 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         return true
     }
 
-    func trainNewModelForConcept(concept: Concept, withInputs inputs: [Input]) {
-        let model = Model(id: concept.name, name: concept.name)
-        model.train(concepts: [concept], inputs: inputs) { (error) in
-            self.customModels.append(model)
-            Clarifai.sharedInstance().save(entities: [model])
+    // MARK: NotificationHandlers
+    @objc func handleImageProcessingDidComplete(notification: Notification) {
+        isProcessingImage = false;
+    }
+
+    @objc func handleModelDidBecomeAvailable(notification: Notification) {
+        if let userInfo = notification.userInfo {
+            let modelId = userInfo[CAIModelUniqueIdentifierKey] as? String
+            if modelId == "aaa03c23b3724a16a56b629203edc62c" {
+                generalModelIsReady = true
+            }
+        }
+    }
+
+    @objc func handleKeyboardWillHide(notification: Notification) {
+        conceptTextField.alpha = 0
+        frameExtractor.startFrameExtraction()
+
+    }
+
+    @objc func handleKeyboardWillShow(notification: Notification) {
+        conceptTextField.isHidden = false 
+        UIView.animate(withDuration: 0.4) {
+            self.conceptTextField.alpha = 1
+        }
+        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+            conceptTextField.frame = CGRect(x: conceptTextField.frame.origin.x, y: keyboardSize.height, width: conceptTextField.frame.width, height: conceptTextField.frame.height)
         }
     }
 

@@ -13,7 +13,6 @@ class PreviewView: UIView {
         guard let layer = layer as? AVCaptureVideoPreviewLayer else {
             fatalError("Failed to load video preview layer.")
         }
-        
         return layer
     }
 	
