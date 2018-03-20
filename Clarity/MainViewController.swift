@@ -153,26 +153,33 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         }
 
         var remainingPredictions = 0
-        for model in customModels {
-            remainingPredictions += 1
-            model.predict([input]) { (outputs, error) in
-                if error != nil {
-                    print(error.debugDescription)
-                    return
-                }
 
-                if let output:Output = outputs?[0] {
-                    // Update table view data with new predicted concepts.
-                    guard let concepts = output.dataAsset.concepts else { return }
-                    self.addCustomPredictions(predictions: concepts)
-                }
+        // Optimize by calculating embeddings first before predicting.
+        input.dataAsset.embeddings { (embeddings) in
+            // Optimization: no need to store the photo after embedding stored.
+            input.dataAsset.image.image = nil
 
-                // After all predictions have completed, image processing is complete.
-                remainingPredictions -= 1
-                if remainingPredictions == 0 {
-                    self.reloadAllPredictions()
-                    DispatchQueue.main.asyncAfter(deadline: .now()) {
-                        NotificationCenter.default.post(name: CustomImageProcessingDidFinish, object: self)
+            for model in self.customModels {
+                remainingPredictions += 1
+                model.predict([input]) { (outputs, error) in
+                    if error != nil {
+                        print(error.debugDescription)
+                        return
+                    }
+
+                    if let output:Output = outputs?[0] {
+                        // Update table view data with new predicted concepts.
+                        guard let concepts = output.dataAsset.concepts else { return }
+                        self.addCustomPredictions(predictions: concepts)
+                    }
+
+                    // After all predictions have completed, image processing is complete.
+                    remainingPredictions -= 1
+                    if remainingPredictions == 0 {
+                        self.reloadAllPredictions()
+                        DispatchQueue.main.asyncAfter(deadline: .now()) {
+                            NotificationCenter.default.post(name: CustomImageProcessingDidFinish, object: self)
+                        }
                     }
                 }
             }
@@ -180,29 +187,31 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     }
 
     func addCustomPredictions(predictions: [Concept]) {
-        // Only display custom predictions if above 0.7 accuracy score.
-        let customThreshold: Float = 0.7
-        for prediction in predictions {
-            if prediction.score < customThreshold {
-                // Score is less than threshold, so remove from table data if necessary.
-                self.customPredictions = self.customPredictions.filter({ (concept) -> Bool in
-                    if concept.id == prediction.id {
-                        return false
-                    } else {
-                        return true
-                    }
-                })
-            } else {
-                // Replace with new accuracy score, or insert into table view data.
-                if let i = self.customPredictions.index(where: { (concept) -> Bool in
-                    return concept.id == prediction.id
-                }) {
-                    self.customPredictions[i] = prediction
-                } else {
-                    self.customPredictions.append(prediction)
-                    self.customPredictions.sort(by: { (concept1, concept2) -> Bool in
-                        return concept1.score >= concept2.score
+        DispatchQueue.main.async {
+            // Only display custom predictions if above 0.7 accuracy score.
+            let customThreshold: Float = 0.7
+            for prediction in predictions {
+                if prediction.score < customThreshold {
+                    // Score is less than threshold, so remove from table data if necessary.
+                    self.customPredictions = self.customPredictions.filter({ (concept) -> Bool in
+                        if concept.id == prediction.id {
+                            return false
+                        } else {
+                            return true
+                        }
                     })
+                } else {
+                    // Replace with new accuracy score, or insert into table view data.
+                    if let i = self.customPredictions.index(where: { (concept) -> Bool in
+                        return concept.id == prediction.id
+                    }) {
+                        self.customPredictions[i] = prediction
+                    } else {
+                        self.customPredictions.append(prediction)
+                        self.customPredictions.sort(by: { (concept1, concept2) -> Bool in
+                            return concept1.score >= concept2.score
+                        })
+                    }
                 }
             }
         }
