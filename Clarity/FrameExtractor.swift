@@ -1,8 +1,7 @@
 //
-//  VideoFrameDelegate.swift
+//  FrameExtractor.swift
 //  Clarity
 //
-//  Created by John Sloan on 2/12/18.
 //  Copyright © 2018 Clarifai. All rights reserved.
 //
 
@@ -18,14 +17,20 @@ class FrameExtractor: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
     private let quality = AVCaptureSession.Preset.medium
     private var permissionGranted = false
     private let sessionQueue = DispatchQueue(label: "session queue")
-    let captureSession = AVCaptureSession()
     private let context = CIContext()
     private var configured = false
+
+    let captureSession = AVCaptureSession()
     weak var delegate: FrameExtractorDelegate?
 
     override init() {
         super.init()
-        checkPermission()
+    }
+
+    func startExtracting() {
+        checkPermission { (granted) in
+            self.permissionGranted = granted
+        }
         sessionQueue.async { [unowned self] in
             self.configured = self.configureSession()
             self.captureSession.startRunning()
@@ -33,22 +38,18 @@ class FrameExtractor: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
     }
 
     // MARK: AVSession configuration
-    private func checkPermission() {
+    private func checkPermission(completion: @escaping (Bool) -> Void) {
         switch AVCaptureDevice.authorizationStatus(for: AVMediaType.video) {
         case .authorized:
-            permissionGranted = true
+             completion(true)
         case .notDetermined:
-            requestPermission()
+            sessionQueue.suspend()
+            AVCaptureDevice.requestAccess(for: AVMediaType.video) { [unowned self] granted in
+                completion(granted)
+                self.sessionQueue.resume()
+            }
         default:
-            permissionGranted = false
-        }
-    }
-
-    private func requestPermission() {
-        sessionQueue.suspend()
-        AVCaptureDevice.requestAccess(for: AVMediaType.video) { [unowned self] granted in
-            self.permissionGranted = granted
-            self.sessionQueue.resume()
+            completion(false)
         }
     }
 

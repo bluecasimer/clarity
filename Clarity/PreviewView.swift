@@ -1,9 +1,9 @@
-/*
-See LICENSE.txt for this sample’s licensing information.
-
-Abstract:
-Application preview view.
-*/
+//
+//  PreviewView.swift
+//  Clarity
+//
+//  Copyright © 2018 Clarifai. All rights reserved.
+//
 
 import UIKit
 import AVFoundation

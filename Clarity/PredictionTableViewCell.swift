@@ -2,7 +2,6 @@
 //  PredictionTableViewCell.swift
 //  Clarity
 //
-//  Created by John Sloan on 3/2/18.
 //  Copyright © 2018 Clarifai. All rights reserved.
 //
 
@@ -20,12 +19,6 @@ class PredictionTableViewCell: UITableViewCell {
         backgroundPadView.layer.cornerRadius = 2.0
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-
     func setScoreValue(score: Float) {
         if (score >= 0.9) {
             // green color
@@ -37,17 +30,6 @@ class PredictionTableViewCell: UITableViewCell {
             // yellow color
             self.scoreLabel.textColor = UIColor.scoreColorYellow()
         }
-
-        let scoreText = String(format: "%.3f", score)
-        self.scoreLabel.text = scoreText
+        self.scoreLabel.text = String(format: "%.3f", score)
     }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-
-        self.contentView.bringSubview(toFront: scoreLabel)
-        self.contentView.bringSubview(toFront: nameLabel)
-        self.contentView.sendSubview(toBack: backgroundPadView)
-    }
-
 }

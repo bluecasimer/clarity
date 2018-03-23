@@ -2,7 +2,6 @@
 //  Prediction.swift
 //  Clarity
 //
-//  Created by John Sloan on 3/15/18.
 //  Copyright © 2018 Clarifai. All rights reserved.
 //
 

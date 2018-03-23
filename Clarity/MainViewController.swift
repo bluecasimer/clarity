@@ -10,23 +10,23 @@ import AVFoundation
 import Clarifai_Apple_SDK
 
 class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate {
-    @IBOutlet weak var conceptTextField: UITextField!
-    @IBOutlet weak var settingsButton: UIButton!
-    @IBOutlet weak var shutterButton: UIButton!
+    @IBOutlet private weak var conceptTextField: UITextField!
+    @IBOutlet private weak var settingsButton: UIButton!
+    @IBOutlet private weak var shutterButton: UIButton!
     @IBOutlet private weak var previewView: PreviewView!
-    @IBOutlet weak var predictionsTableView: UITableView!
-    @IBOutlet weak var showAllConceptsButton: UIButton!
-    @IBOutlet weak var predictionsTableHeight: NSLayoutConstraint!
+    @IBOutlet private weak var predictionsTableView: UITableView!
+    @IBOutlet private weak var showAllConceptsButton: UIButton!
+    @IBOutlet private weak var predictionsTableHeight: NSLayoutConstraint!
     
-    var frameExtractor: FrameExtractor!
-    var generalModel: Model!
-    var generalModelIsReady = false
-    var isProcessingImage = false
-    var customModels: [Model] = []
-    var generalPredictions: [Concept] = []
-    var customPredictions: [Concept] = []
-    var lastCapturedFrame: UIImage?
-    let customThreshold: Float = 0.7
+    private var frameExtractor: FrameExtractor!
+    private var generalModel: Model!
+    private var generalModelIsReady = false
+    private var isProcessingImage = false
+    private var customModels: [Model] = []
+    private var generalPredictions: [Concept] = []
+    private var customPredictions: [Concept] = []
+    private var lastCapturedFrame: UIImage?
+    private let customThreshold: Float = 0.7
 
     override func viewWillAppear(_ animated: Bool) {
         conceptTextField.isHidden = true
@@ -44,21 +44,20 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
 
         // Begin extracting video frames to predict on
         frameExtractor = FrameExtractor()
-        frameExtractor.delegate = self;
+        frameExtractor.delegate = self
+        frameExtractor.startExtracting()
 
         // Set up video preview view
         previewView.session = frameExtractor.captureSession
-        DispatchQueue.main.async {
-            let statusBarOrientation = UIApplication.shared.statusBarOrientation
-            var initialVideoOrientation: AVCaptureVideoOrientation = .portrait
-            if statusBarOrientation != .unknown {
-                if let videoOrientation = AVCaptureVideoOrientation(rawValue: statusBarOrientation.rawValue) {
-                    initialVideoOrientation = videoOrientation
-                }
+        let statusBarOrientation = UIApplication.shared.statusBarOrientation
+        var initialVideoOrientation: AVCaptureVideoOrientation = .portrait
+        if statusBarOrientation != .unknown {
+            if let videoOrientation = AVCaptureVideoOrientation(rawValue: statusBarOrientation.rawValue) {
+                initialVideoOrientation = videoOrientation
             }
-            self.previewView.videoPreviewLayer.connection?.videoOrientation = initialVideoOrientation
-            self.previewView.videoPreviewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill;
         }
+        previewView.videoPreviewLayer.connection?.videoOrientation = initialVideoOrientation
+        previewView.videoPreviewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill;
 
         generalModel = Clarifai.sharedInstance().generalModel
         // won't load general model without initiating call to predict...
