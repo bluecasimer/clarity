@@ -42,7 +42,6 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleImageProcessingDidComplete(notification:)), name: ImageProcessingDidFinish, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.viewDidRotate(notification:)), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
 
-        // Begin extracting video frames to predict on
         frameExtractor = FrameExtractor()
         frameExtractor.delegate = self
         frameExtractor.startExtracting()
@@ -67,7 +66,6 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         generalModel.predict([input]) { (output, error) in
         }
 
-        // Load any previously trained custom models
         loadSavedModels()
 
         predictionsTableView.dataSource = self          
@@ -122,7 +120,6 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
 
     // MARK: Predicting with Clarifai models
     func predictWithGeneralModel(input: Input) {
-        // Add predictions from Clarifai's General model
         generalModel.predict([input]) { (outputs, error) in
             if error != nil {
                 print(error.debugDescription)
@@ -130,7 +127,7 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
             }
 
             if let output:Output = outputs?[0] {
-                // Update table view data with new predicted concepts
+                // Update table view data with new predicted concepts from Output
                 guard let concepts = output.dataAsset.concepts else { return }
                 let filteredConcepts = Array(self.filterConcepts(concepts:concepts).prefix(5))
                 self.generalPredictions = filteredConcepts
@@ -295,7 +292,6 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     @objc func handleKeyboardWillHide(notification: Notification) {
         conceptTextField.alpha = 0
         frameExtractor.startFrameExtraction()
-
     }
 
     @objc func handleKeyboardWillShow(notification: Notification) {
@@ -305,6 +301,7 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         }
         if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
             conceptTextField.frame = CGRect(x: conceptTextField.frame.origin.x, y: keyboardSize.height, width: conceptTextField.frame.width, height: conceptTextField.frame.height)
+            self.view.bringSubview(toFront: conceptTextField)
         }
     }
 

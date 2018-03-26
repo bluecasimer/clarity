@@ -32,7 +32,7 @@ class FrameExtractor: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
             self.permissionGranted = granted
         }
         sessionQueue.async { [unowned self] in
-            self.configured = self.configureSession()
+            self.configured = self.configureSessionForVideo()
             self.captureSession.startRunning()
         }
     }
@@ -53,15 +53,12 @@ class FrameExtractor: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
         }
     }
 
-    private func configureSession() -> Bool {
+    private func configureSessionForVideo() -> Bool {
         guard permissionGranted else { return false }
 
-        // Set up capture session and add video input
         captureSession.sessionPreset = quality
         guard let captureDevice = selectCaptureDevice() else { return false }
-
         guard let captureDeviceInput = try? AVCaptureDeviceInput(device: captureDevice) else { return false }
-
         if captureSession.canAddInput(captureDeviceInput) {
             captureSession.addInput(captureDeviceInput)
         } else {
@@ -69,7 +66,6 @@ class FrameExtractor: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
             return false
         }
 
-        // Set up AVCaptureVideoDataOutput for frame extraction.
         let videoOutput = AVCaptureVideoDataOutput()
         videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "sample buffer"))
         guard captureSession.canAddOutput(videoOutput) else { return false }
@@ -102,6 +98,7 @@ class FrameExtractor: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
         return UIImage(cgImage: cgImage)
     }
 
+    // MARK: Public methods
     func stopFrameExtraction() {
         if !configured {
             return

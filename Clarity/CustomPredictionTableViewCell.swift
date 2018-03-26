@@ -15,7 +15,6 @@ class CustomPredictionTableViewCell: UITableViewCell {
 
         override func awakeFromNib() {
             super.awakeFromNib()
-            // Initialization code
             backgroundPadView.layer.cornerRadius = 2.0
         }
 

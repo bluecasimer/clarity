@@ -15,19 +15,15 @@ class PredictionTableViewCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
         backgroundPadView.layer.cornerRadius = 2.0
     }
 
     func setScoreValue(score: Float) {
         if (score >= 0.9) {
-            // green color
             self.scoreLabel.textColor = UIColor.scoreColorGreen()
         } else if score < 0.6 {
-            // red color
             self.scoreLabel.textColor = UIColor.scoreColorRed()
         } else {
-            // yellow color
             self.scoreLabel.textColor = UIColor.scoreColorYellow()
         }
         self.scoreLabel.text = String(format: "%.3f", score)
