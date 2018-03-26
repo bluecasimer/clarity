@@ -59,7 +59,7 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         previewView.videoPreviewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill;
 
         generalModel = Clarifai.sharedInstance().generalModel
-        // won't load general model without initiating call to predict...
+        // won't load general model without initiating call to predict.
         let image = UIImage()
         let dataAsset = DataAsset(image: Image(image: image))
         let input =  Input(dataAsset: dataAsset)
@@ -119,6 +119,13 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     }
 
     // MARK: Predicting with Clarifai models
+
+    /**
+     Predict using Clarifai's General model.
+
+     - parameters:
+         - input: Input containing current video frame to predict on.
+     */
     func predictWithGeneralModel(input: Input) {
         generalModel.predict([input]) { (outputs, error) in
             if error != nil {
@@ -136,6 +143,12 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         }
     }
 
+    /**
+     Predict using trained custom models.
+
+     - parameters:
+         - input: Input containing current video frame to predict on.
+     */
     func predictWithCustomModels(input: Input) {
         if customModels.isEmpty {
             self.reloadAllPredictions()
@@ -245,13 +258,20 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     // MARK: Custom training Clarifai Models
     @IBAction func addConcept(_ sender: AnyObject) {
         guard lastCapturedFrame != nil else { return }
-
         conceptTextField.becomeFirstResponder();
-
-        // pause video preview
         frameExtractor.stopFrameExtraction()
     }
 
+    /**
+     Train a custom model for a new concept and current video frames.
+
+     - parameters:
+         - concept: Concept that identifies what the images being trained are.
+         - inputs: an array of Inputs containing the video frames.
+
+     - Important:
+         After training is complete, the model is saved and added to a list of custom models used for predicting on future video frames.
+     */
     func trainNewModelForConcept(concept: Concept, withInputs inputs: [Input]) {
         let model = Model(id: concept.name, name: concept.name)
         model.train(concepts: [concept], inputs: inputs) { (error) in
