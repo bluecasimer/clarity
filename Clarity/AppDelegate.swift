@@ -13,7 +13,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        Clarifai.sharedInstance().start(apiKey: "d7ca388538f04fb3927bad7b015a7653")
+        Clarifai.sharedInstance().start(apiKey: "<<Your API Key>>")
 
         return true
     }

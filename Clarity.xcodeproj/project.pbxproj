@@ -7,27 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		53EA23CA5E10FCF6DD932B41 /* Pods_Clarity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C56AF82F033F20956C2854D /* Pods_Clarity.framework */; };
+		791D4ABEA73CBB23CA25C9C2 /* Pods_Clarity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 178472699A381450D326D0C3 /* Pods_Clarity.framework */; };
 		C9225403201120FF00CC6302 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9225402201120FF00CC6302 /* AppDelegate.swift */; };
 		C9225405201120FF00CC6302 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9225404201120FF00CC6302 /* MainViewController.swift */; };
 		C9225408201120FF00CC6302 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9225406201120FF00CC6302 /* Main.storyboard */; };
 		C922540A201120FF00CC6302 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9225409201120FF00CC6302 /* Assets.xcassets */; };
 		C922540D201120FF00CC6302 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C922540B201120FF00CC6302 /* LaunchScreen.storyboard */; };
-		C922541620112B9100CC6302 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C922541520112B9100CC6302 /* SettingsViewController.swift */; };
 		EB19CF36203223B800FC7658 /* FrameExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB19CF35203223B800FC7658 /* FrameExtractor.swift */; };
 		EB1A99592040A632008795AB /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1A99582040A632008795AB /* Constants.swift */; };
 		EB1F3915202E31F60084F7AA /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1F3914202E31F60084F7AA /* PreviewView.swift */; };
-		EBC50A64205B5C6300E044F3 /* Prediction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBC50A63205B5C6300E044F3 /* Prediction.swift */; };
 		EBD343BA204A0DF90030DE76 /* PredictionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD343B8204A0DF90030DE76 /* PredictionTableViewCell.swift */; };
 		EBD343BB204A0DF90030DE76 /* PredictionTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = EBD343B9204A0DF90030DE76 /* PredictionTableViewCell.xib */; };
-		EBF568F12060798C0024F6A8 /* CustomPredictionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBF568EF2060798C0024F6A8 /* CustomPredictionTableViewCell.swift */; };
-		EBF568F22060798C0024F6A8 /* CustomPredictionTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = EBF568F02060798C0024F6A8 /* CustomPredictionTableViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0BF4FAE286AB462BEC2E4D37 /* Pods-Clarity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clarity.release.xcconfig"; path = "Pods/Target Support Files/Pods-Clarity/Pods-Clarity.release.xcconfig"; sourceTree = "<group>"; };
-		1C56AF82F033F20956C2854D /* Pods_Clarity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Clarity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		88119CE6CE7653F6459A0F8C /* Pods-Clarity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clarity.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Clarity/Pods-Clarity.debug.xcconfig"; sourceTree = "<group>"; };
+		0FFAA389B47784B5E197E0F6 /* Pods-Clarity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clarity.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Clarity/Pods-Clarity.debug.xcconfig"; sourceTree = "<group>"; };
+		178472699A381450D326D0C3 /* Pods_Clarity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Clarity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		903187FA664BC3F6B46C8F50 /* Pods-Clarity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Clarity.release.xcconfig"; path = "Pods/Target Support Files/Pods-Clarity/Pods-Clarity.release.xcconfig"; sourceTree = "<group>"; };
 		C92253FF201120FF00CC6302 /* Clarity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clarity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9225402201120FF00CC6302 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C9225404201120FF00CC6302 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -36,15 +32,11 @@
 		C922540C201120FF00CC6302 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C922540E201120FF00CC6302 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C9225414201121C000CC6302 /* Clarity.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Clarity.entitlements; sourceTree = "<group>"; };
-		C922541520112B9100CC6302 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		EB19CF35203223B800FC7658 /* FrameExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameExtractor.swift; sourceTree = "<group>"; };
 		EB1A99582040A632008795AB /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		EB1F3914202E31F60084F7AA /* PreviewView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
-		EBC50A63205B5C6300E044F3 /* Prediction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prediction.swift; sourceTree = "<group>"; };
 		EBD343B8204A0DF90030DE76 /* PredictionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionTableViewCell.swift; sourceTree = "<group>"; };
 		EBD343B9204A0DF90030DE76 /* PredictionTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PredictionTableViewCell.xib; sourceTree = "<group>"; };
-		EBF568EF2060798C0024F6A8 /* CustomPredictionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPredictionTableViewCell.swift; sourceTree = "<group>"; };
-		EBF568F02060798C0024F6A8 /* CustomPredictionTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomPredictionTableViewCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,19 +44,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				53EA23CA5E10FCF6DD932B41 /* Pods_Clarity.framework in Frameworks */,
+				791D4ABEA73CBB23CA25C9C2 /* Pods_Clarity.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		57721AC5BEB75EBEDF8BC433 /* Frameworks */ = {
+		21B2B762FEA4B00056A27220 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				1C56AF82F033F20956C2854D /* Pods_Clarity.framework */,
+				0FFAA389B47784B5E197E0F6 /* Pods-Clarity.debug.xcconfig */,
+				903187FA664BC3F6B46C8F50 /* Pods-Clarity.release.xcconfig */,
 			);
-			name = Frameworks;
+			name = Pods;
 			sourceTree = "<group>";
 		};
 		C92253F6201120FF00CC6302 = {
@@ -72,8 +65,8 @@
 			children = (
 				C9225401201120FF00CC6302 /* Clarity */,
 				C9225400201120FF00CC6302 /* Products */,
-				E7FC5FCD183510B6B2E62D85 /* Pods */,
-				57721AC5BEB75EBEDF8BC433 /* Frameworks */,
+				21B2B762FEA4B00056A27220 /* Pods */,
+				EC4505BED4373FF2E2CA5284 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -93,13 +86,9 @@
 				EB1A99582040A632008795AB /* Constants.swift */,
 				EB1F3914202E31F60084F7AA /* PreviewView.swift */,
 				C9225404201120FF00CC6302 /* MainViewController.swift */,
-				EBC50A63205B5C6300E044F3 /* Prediction.swift */,
 				EBD343B8204A0DF90030DE76 /* PredictionTableViewCell.swift */,
 				EBD343B9204A0DF90030DE76 /* PredictionTableViewCell.xib */,
-				EBF568EF2060798C0024F6A8 /* CustomPredictionTableViewCell.swift */,
-				EBF568F02060798C0024F6A8 /* CustomPredictionTableViewCell.xib */,
 				EB19CF35203223B800FC7658 /* FrameExtractor.swift */,
-				C922541520112B9100CC6302 /* SettingsViewController.swift */,
 				C9225406201120FF00CC6302 /* Main.storyboard */,
 				C9225409201120FF00CC6302 /* Assets.xcassets */,
 				C922540B201120FF00CC6302 /* LaunchScreen.storyboard */,
@@ -108,13 +97,12 @@
 			path = Clarity;
 			sourceTree = "<group>";
 		};
-		E7FC5FCD183510B6B2E62D85 /* Pods */ = {
+		EC4505BED4373FF2E2CA5284 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				88119CE6CE7653F6459A0F8C /* Pods-Clarity.debug.xcconfig */,
-				0BF4FAE286AB462BEC2E4D37 /* Pods-Clarity.release.xcconfig */,
+				178472699A381450D326D0C3 /* Pods_Clarity.framework */,
 			);
-			name = Pods;
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -124,12 +112,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C9225411201120FF00CC6302 /* Build configuration list for PBXNativeTarget "Clarity" */;
 			buildPhases = (
-				9217040CC7207229C6CD01AC /* [CP] Check Pods Manifest.lock */,
+				DAE4581B5A82D6AA7689F98E /* [CP] Check Pods Manifest.lock */,
 				C92253FB201120FF00CC6302 /* Sources */,
 				C92253FC201120FF00CC6302 /* Frameworks */,
 				C92253FD201120FF00CC6302 /* Resources */,
-				B99807F0EBE463E075C46306 /* [CP] Embed Pods Frameworks */,
-				6FF40F3A5E798142D2661DA5 /* [CP] Copy Pods Resources */,
+				CFD5A11A78DC3E5529904F0E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -147,7 +134,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0920;
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = Clarifai;
 				TargetAttributes = {
 					C92253FE201120FF00CC6302 = {
@@ -190,7 +177,6 @@
 				EBD343BB204A0DF90030DE76 /* PredictionTableViewCell.xib in Resources */,
 				C922540D201120FF00CC6302 /* LaunchScreen.storyboard in Resources */,
 				C922540A201120FF00CC6302 /* Assets.xcassets in Resources */,
-				EBF568F22060798C0024F6A8 /* CustomPredictionTableViewCell.xib in Resources */,
 				C9225408201120FF00CC6302 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -198,40 +184,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		6FF40F3A5E798142D2661DA5 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Clarity/Pods-Clarity-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9217040CC7207229C6CD01AC /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Clarity-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B99807F0EBE463E075C46306 /* [CP] Embed Pods Frameworks */ = {
+		CFD5A11A78DC3E5529904F0E /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -249,6 +202,24 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Clarity/Pods-Clarity-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		DAE4581B5A82D6AA7689F98E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Clarity-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -259,9 +230,6 @@
 				C9225405201120FF00CC6302 /* MainViewController.swift in Sources */,
 				EB1F3915202E31F60084F7AA /* PreviewView.swift in Sources */,
 				C9225403201120FF00CC6302 /* AppDelegate.swift in Sources */,
-				EBC50A64205B5C6300E044F3 /* Prediction.swift in Sources */,
-				C922541620112B9100CC6302 /* SettingsViewController.swift in Sources */,
-				EBF568F12060798C0024F6A8 /* CustomPredictionTableViewCell.swift in Sources */,
 				EBD343BA204A0DF90030DE76 /* PredictionTableViewCell.swift in Sources */,
 				EB19CF36203223B800FC7658 /* FrameExtractor.swift in Sources */,
 				EB1A99592040A632008795AB /* Constants.swift in Sources */,
@@ -304,6 +272,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -311,6 +280,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -361,6 +331,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -368,6 +339,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -399,7 +371,7 @@
 		};
 		C9225412201120FF00CC6302 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 88119CE6CE7653F6459A0F8C /* Pods-Clarity.debug.xcconfig */;
+			baseConfigurationReference = 0FFAA389B47784B5E197E0F6 /* Pods-Clarity.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Clarity/Clarity.entitlements;
@@ -417,7 +389,7 @@
 		};
 		C9225413201120FF00CC6302 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0BF4FAE286AB462BEC2E4D37 /* Pods-Clarity.release.xcconfig */;
+			baseConfigurationReference = 903187FA664BC3F6B46C8F50 /* Pods-Clarity.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Clarity/Clarity.entitlements;

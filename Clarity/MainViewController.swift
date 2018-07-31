@@ -10,9 +10,7 @@ import AVFoundation
 import Clarifai_Apple_SDK
 
 class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate {
-    @IBOutlet private weak var conceptTextField: UITextField!
-    @IBOutlet private weak var settingsButton: UIButton!
-    @IBOutlet private weak var shutterButton: UIButton!
+
     @IBOutlet private weak var previewView: PreviewView!
     @IBOutlet private weak var predictionsTableView: UITableView!
     @IBOutlet private weak var showAllConceptsButton: UIButton!
@@ -22,22 +20,19 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     private var generalModel: Model!
     private var generalModelIsReady = false
     private var isProcessingImage = false
-    private var customModels: [Model] = []
     private var generalPredictions: [Concept] = []
-    private var customPredictions: [Concept] = []
-    private var lastCapturedFrame: UIImage?
-    private let customThreshold: Float = 0.7
+    private var showAllConcepts = false
+    private var cellHeight: CGFloat = 55.0
 
-    override func viewWillAppear(_ animated: Bool) {
-        conceptTextField.isHidden = true
-        conceptTextField.alpha = 0
-    }
+    // Adjust the rate at which concepts are refreshed.
+    private var refreshRate = 0.4
+
+    // Filter out any unneeded concepts.
+    private var blacklistedConcepts = ["no person","indoors"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleKeyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleKeyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleModelDidBecomeAvailable(notification:)), name: NSNotification.Name.CAIModelDidBecomeAvailable, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleImageProcessingDidComplete(notification:)), name: ImageProcessingDidFinish, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.viewDidRotate(notification:)), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
@@ -48,6 +43,44 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
 
         // Set up video preview view
         previewView.session = frameExtractor.captureSession
+        alignVideoPreviewOrientation()
+
+        // Load Clarifai's general model to use for predicting tags
+        generalModel = Clarifai.sharedInstance().generalModel
+
+        predictionsTableView.dataSource = self          
+        predictionsTableView.delegate = self
+        let cellNib = UINib(nibName: "PredictionTableViewCell", bundle: nil)
+        predictionsTableView.register(cellNib, forCellReuseIdentifier: "PredictionCell")
+
+        showAllConceptsButton.layer.cornerRadius = 2.0
+        showAllConceptsButton.alpha = 0.0
+        self.showAllConceptsButton.isEnabled = false
+    }
+
+    @objc func viewDidRotate(notification: Notification) {
+        guard generalModelIsReady else { return }
+
+        // Ensure the video preview feed also rotates with device
+        DispatchQueue.main.async {
+            self.alignVideoPreviewOrientation()
+        }
+
+        let statusBarOrientation = UIApplication.shared.statusBarOrientation
+        if UIInterfaceOrientationIsLandscape(statusBarOrientation) {
+            UIView.animate(withDuration: 0.1) {
+                self.showAllConceptsButton.alpha = 0.0
+                self.showAllConceptsButton.isEnabled = false
+            }
+        } else {
+            UIView.animate(withDuration: 0.1) {
+                self.showAllConceptsButton.alpha = 1.0
+                self.showAllConceptsButton.isEnabled = true
+            }
+        }
+    }
+
+    func alignVideoPreviewOrientation() {
         let statusBarOrientation = UIApplication.shared.statusBarOrientation
         var initialVideoOrientation: AVCaptureVideoOrientation = .portrait
         if statusBarOrientation != .unknown {
@@ -57,55 +90,23 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         }
         previewView.videoPreviewLayer.connection?.videoOrientation = initialVideoOrientation
         previewView.videoPreviewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill;
-
-        generalModel = Clarifai.sharedInstance().generalModel
-        // won't load general model without initiating call to predict.
-        let image = UIImage()
-        let dataAsset = DataAsset(image: Image(image: image))
-        let input =  Input(dataAsset: dataAsset)
-        generalModel.predict([input]) { (output, error) in
-        }
-
-        loadSavedModels()
-
-        predictionsTableView.dataSource = self          
-        predictionsTableView.delegate = self
-        let cellNib = UINib(nibName: "PredictionTableViewCell", bundle: nil)
-        predictionsTableView.register(cellNib, forCellReuseIdentifier: "PredictionCell")
-        let customCellNib = UINib(nibName: "CustomPredictionTableViewCell", bundle: nil)
-        predictionsTableView.register(customCellNib, forCellReuseIdentifier: "CustomPredictionCell")
-
-        showAllConceptsButton.layer.cornerRadius = 2.0
-        conceptTextField.delegate = self
     }
 
-    override func viewWillLayoutSubviews() {
-        super.updateViewConstraints()
-        self.predictionsTableHeight?.constant = self.predictionsTableView.contentSize.height
-        UIView.animate(withDuration: 0.4) {
-            self.view.layoutIfNeeded()
-        }
-    }
+    @IBAction func toggleShowConcepts(_ sender: UIButton) {
+        showAllConcepts = !showAllConcepts
 
-    @objc func viewDidRotate(notification: Notification) {
-        // Ensure the video preview feed also rotates with device
-        DispatchQueue.main.async {
-            let statusBarOrientation = UIApplication.shared.statusBarOrientation
-            var initialVideoOrientation: AVCaptureVideoOrientation = .portrait
-            if statusBarOrientation != .unknown {
-                if let videoOrientation = AVCaptureVideoOrientation(rawValue: statusBarOrientation.rawValue) {
-                    initialVideoOrientation = videoOrientation
-                }
-            }
-            self.previewView.videoPreviewLayer.connection?.videoOrientation = initialVideoOrientation
-            self.previewView.videoPreviewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill;
+        if showAllConcepts {
+            showAllConceptsButton.setTitle("Show Fewer Concepts", for: .normal)
+        } else {
+            showAllConceptsButton.setTitle("Show All Concepts", for: .normal)
         }
+
+        self.reloadAllPredictions()
     }
 
     // MARK: FrameExtractorDelegate Methods
     func capturedVideoFrame(image: UIImage) {
         guard generalModelIsReady else { return }
-        lastCapturedFrame = image
 
         if isProcessingImage {
             return
@@ -115,7 +116,6 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         let dataAsset = DataAsset.init(image: Image.init(image: image))
         let input = Input.init(dataAsset: dataAsset)
         predictWithGeneralModel(input: input)
-        predictWithCustomModels(input: input)
     }
 
     // MARK: Predicting with Clarifai models
@@ -136,98 +136,22 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
             if let output:Output = outputs?[0] {
                 // Update table view data with new predicted concepts from Output
                 guard let concepts = output.dataAsset.concepts else { return }
-                let filteredConcepts = Array(self.filterConcepts(concepts:concepts).prefix(5))
+                let filteredConcepts = Array(self.filterConcepts(concepts:concepts))
                 self.generalPredictions = filteredConcepts
                 self.reloadAllPredictions()
-            }
-        }
-    }
-
-    /**
-     Predict using trained custom models.
-
-     - parameters:
-         - input: Input containing current video frame to predict on.
-     */
-    func predictWithCustomModels(input: Input) {
-        if customModels.isEmpty {
-            self.reloadAllPredictions()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                NotificationCenter.default.post(name: ImageProcessingDidFinish, object: self)
-            }
-        }
-
-        var remainingPredictions = 0
-
-        // Optimize by calculating embeddings once before predicting with all custom models
-        input.dataAsset.embeddings { (embeddings) in
-            for model in self.customModels {
-                remainingPredictions += 1
-
-                model.predict([input]) { (outputs, error) in
-                    if error != nil {
-                        print(error.debugDescription)
-                        return
-                    }
-
-                    if let output:Output = outputs?[0] {
-                        // Update table view data with new predicted concepts
-                        guard let concepts = output.dataAsset.concepts else { return }
-                        self.addCustomPredictions(predictions: concepts)
-                    }
-
-                    // After all predictions have completed, image processing is complete
-                    remainingPredictions -= 1
-                    if remainingPredictions == 0 {
-                        self.reloadAllPredictions()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            NotificationCenter.default.post(name: ImageProcessingDidFinish, object: self)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    func addCustomPredictions(predictions: [Concept]) {
-        DispatchQueue.main.async {
-            // Only display custom predictions if above accuracy score
-            for prediction in predictions {
-                if prediction.score < self.customThreshold {
-                    // Score is less than threshold, so remove from table data if necessary
-                    self.customPredictions = self.customPredictions.filter({ (concept) -> Bool in
-                        if concept.id == prediction.id {
-                            return false
-                        } else {
-                            return true
-                        }
-                    })
-                } else {
-                    // Replace with new accuracy score, or insert into table view data
-                    if let i = self.customPredictions.index(where: { (concept) -> Bool in
-                        return concept.id == prediction.id
-                    }) {
-                        self.customPredictions[i] = prediction
-                        self.customPredictions.sort(by: { (concept1, concept2) -> Bool in
-                            return concept1.score >= concept2.score
-                        })
-                    } else {
-                        self.customPredictions.append(prediction)
-                        self.customPredictions.sort(by: { (concept1, concept2) -> Bool in
-                            return concept1.score >= concept2.score
-                        })
-                    }
-                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + self.refreshRate, execute: {
+                    NotificationCenter.default.post(name: ImageProcessingDidFinish, object: self)
+                })
             }
         }
     }
 
     func reloadAllPredictions() {
-        let range = NSMakeRange(0, 2)
+        let range = NSMakeRange(0, 1)
         let sections = NSIndexSet(indexesIn: range)
         self.predictionsTableView.reloadSections(sections as IndexSet, with: .none)
         self.predictionsTableHeight?.constant = self.predictionsTableView.contentSize.height
-        UIView.animate(withDuration: 0.4) {
+        UIView.animate(withDuration: refreshRate) {
             self.view.layoutIfNeeded()
         }
     }
@@ -235,7 +159,7 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     func filterConcepts(concepts: [Concept]) -> [Concept] {
         // Remove any unwanted concepts
         let filteredConcepts = concepts.filter { (concept) -> Bool in
-            if concept.name == "no person" {
+            if blacklistedConcepts.contains(concept.name) {
                 return false
             } else {
                 return true
@@ -243,56 +167,6 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         }
 
         return filteredConcepts
-    }
-
-    func loadSavedModels() {
-        Clarifai.sharedInstance().load(entityType: EntityType.model, range: NSMakeRange(0,Int.max)) { (models, error) in
-            if error != nil {
-                print(error.debugDescription)
-                return
-            }
-            self.customModels = models as! [Model]
-        }
-    }
-
-    // MARK: Custom training Clarifai Models
-    @IBAction func addConcept(_ sender: AnyObject) {
-        guard lastCapturedFrame != nil else { return }
-        conceptTextField.becomeFirstResponder();
-        frameExtractor.stopFrameExtraction()
-    }
-
-    /**
-     Train a custom model for a new concept and current video frames.
-
-     - parameters:
-         - concept: Concept that identifies what the images being trained are.
-         - inputs: an array of Inputs containing the video frames.
-
-     - Important:
-         After training is complete, the model is saved and added to a list of custom models used for predicting on future video frames.
-     */
-    func trainNewModelForConcept(concept: Concept, withInputs inputs: [Input]) {
-        let model = Model(id: concept.name, name: concept.name)
-        model.train(concepts: [concept], inputs: inputs) { (error) in
-            self.customModels.append(model)
-            Clarifai.sharedInstance().save(entities: [model])
-        }
-    }
-
-    // MARK: UITextField delegate
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        guard lastCapturedFrame != nil else { return true }
-        conceptTextField.resignFirstResponder()
-
-        if let text = textField.text {
-            let newConcept = Concept(id: text, name: text, score: 1.0)
-            let dataAsset = DataAsset(image: Image(image: lastCapturedFrame))
-            dataAsset.add(concepts: [newConcept])
-            let input = Input(dataAsset: dataAsset)
-            trainNewModelForConcept(concept: newConcept, withInputs: [input])
-        }
-        return true
     }
 
     // MARK: NotificationHandlers
@@ -305,37 +179,27 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
             let modelId = userInfo[CAIModelUniqueIdentifierKey] as? String
             if modelId == "aaa03c23b3724a16a56b629203edc62c" {
                 generalModelIsReady = true
+                UIView.animate(withDuration: 0.6) {
+                    self.showAllConceptsButton.alpha = 1.0
+                    self.showAllConceptsButton.isEnabled = true
+                }
             }
-        }
-    }
-
-    @objc func handleKeyboardWillHide(notification: Notification) {
-        conceptTextField.alpha = 0
-        frameExtractor.startFrameExtraction()
-    }
-
-    @objc func handleKeyboardWillShow(notification: Notification) {
-        conceptTextField.isHidden = false 
-        UIView.animate(withDuration: 0.4) {
-            self.conceptTextField.alpha = 1
-        }
-        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-            conceptTextField.frame = CGRect(x: conceptTextField.frame.origin.x, y: keyboardSize.height, width: conceptTextField.frame.width, height: conceptTextField.frame.height)
-            self.view.bringSubview(toFront: conceptTextField)
         }
     }
 
     // MARK: UITableViewDataSource
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 1
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return min(3,customPredictions.count)
-        case 1:
-            return min(5-min(3,customPredictions.count),generalPredictions.count)
+            var minConcepts = 5
+            if showAllConcepts {
+                minConcepts = Int(floor((self.view.frame.height - 10) / cellHeight) - 1.0)
+            }
+            return min(minConcepts, generalPredictions.count)
         default:
             return 0
         }
@@ -343,25 +207,19 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
-        case 0:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "CustomPredictionCell") as! CustomPredictionTableViewCell
-            let prediction = customPredictions[indexPath.row]
-            cell.nameLabel.text = prediction.name
-            cell.setScoreValue(score: prediction.score)
-            return cell
-        case 1:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "PredictionCell") as! PredictionTableViewCell
-            let prediction = generalPredictions[indexPath.row]
-            cell.nameLabel.text = prediction.name
-            cell.setScoreValue(score: prediction.score)
-            return cell
-        default:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "PredictionCell") as! PredictionTableViewCell
-            return cell
+            case 0:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "PredictionCell") as! PredictionTableViewCell
+                let prediction = generalPredictions[indexPath.row]
+                cell.nameLabel.text = prediction.name
+                cell.setScoreValue(score: prediction.score)
+                return cell
+            default:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "PredictionCell") as! PredictionTableViewCell
+                return cell
         }
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 55
+        return cellHeight
     }
 }

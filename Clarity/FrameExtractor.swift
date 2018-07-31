@@ -14,7 +14,7 @@ protocol FrameExtractorDelegate: class {
 
 class FrameExtractor: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVCapturePhotoCaptureDelegate {
     private let position = AVCaptureDevice.Position.front
-    private let quality = AVCaptureSession.Preset.medium
+    private let quality = AVCaptureSession.Preset.hd1280x720
     private var permissionGranted = false
     private let sessionQueue = DispatchQueue(label: "session queue")
     private let context = CIContext()
