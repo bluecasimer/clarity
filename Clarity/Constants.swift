@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 
 let ImageProcessingDidFinish: Notification.Name = Notification.Name("ImageProcessingDidFinish")
+let APIKeyUserDefaultsKey = "CAIAPIKey"
 
 extension UIColor {
     class func scoreColorGreen() -> UIColor {

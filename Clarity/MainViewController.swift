@@ -58,6 +58,15 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         self.showAllConceptsButton.isEnabled = false
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+
     @objc func viewDidRotate(notification: Notification) {
         guard generalModelIsReady else { return }
 
