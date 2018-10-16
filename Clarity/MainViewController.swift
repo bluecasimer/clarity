@@ -35,7 +35,7 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
 
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleModelDidBecomeAvailable(notification:)), name: NSNotification.Name.CAIModelDidBecomeAvailable, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.handleImageProcessingDidComplete(notification:)), name: ImageProcessingDidFinish, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.viewDidRotate(notification:)), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.viewDidRotate(notification:)), name: UIDevice.orientationDidChangeNotification, object: nil)
 
         frameExtractor = FrameExtractor()
         frameExtractor.delegate = self
@@ -76,7 +76,7 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         }
 
         let statusBarOrientation = UIApplication.shared.statusBarOrientation
-        if UIInterfaceOrientationIsLandscape(statusBarOrientation) {
+        if statusBarOrientation.isLandscape {
             UIView.animate(withDuration: 0.1) {
                 self.showAllConceptsButton.alpha = 0.0
                 self.showAllConceptsButton.isEnabled = false
