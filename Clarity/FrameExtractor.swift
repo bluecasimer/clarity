@@ -15,6 +15,8 @@
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
+//
+//  Adapted from Boris Ohayon https://medium.com/ios-os-x-development/ios-camera-frames-extraction-d2c0f80ed05a
 
 import UIKit
 import AVFoundation
