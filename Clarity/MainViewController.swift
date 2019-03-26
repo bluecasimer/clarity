@@ -41,6 +41,49 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     // Filter out any unneeded concepts.
     private var blacklistedConcepts = ["no person","indoors"]
 
+    // Input your own API Key here, or in the app after launch. This code will then
+    // start the Clarifai SDK and begin loading the general model for predicting.
+    func initializeAPIKey() {
+        var apiKey = "<<Your API Key>>"
+
+        if apiKey != "<<Your API Key>>" {
+            UserDefaults.standard.set(apiKey, forKey: APIKeyUserDefaultsKey)
+            startSDK(apiKey)
+            return
+        }
+
+        if let savedAPIKey = UserDefaults.standard.string(forKey: APIKeyUserDefaultsKey) {
+            apiKey = savedAPIKey
+            startSDK(apiKey)
+            return
+        }
+
+        // No API key stored or given, prompt user in-app to input API key.
+        DispatchQueue.main.async {
+            let alertController = UIAlertController(title: "Add Your API Key", message: "For more info, go to \nhttps://clarifai.com/developer", preferredStyle: .alert)
+            alertController.addTextField(configurationHandler: { (textField) in
+                textField.placeholder = "Enter your API key"
+            })
+
+            let saveAction = UIAlertAction(title: "Save", style: .default, handler: { alert -> Void in
+                let textField = alertController.textFields![0] as UITextField
+                if let key = textField.text {
+                    UserDefaults.standard.set(key, forKey: APIKeyUserDefaultsKey)
+                    self.startSDK(key)
+                }
+            })
+
+            alertController.addAction(saveAction)
+            self.present(alertController, animated: true, completion: nil)
+        }
+
+    }
+
+    func startSDK(_ apiKey: String) {
+        Clarifai.sharedInstance().start(apiKey: apiKey)
+        generalModel = Clarifai.sharedInstance().generalModel
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -56,9 +99,6 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         previewView.session = frameExtractor.captureSession
         alignVideoPreviewOrientation()
 
-        // Load Clarifai's general model to use for predicting tags
-        generalModel = Clarifai.sharedInstance().generalModel
-
         predictionsTableView.dataSource = self          
         predictionsTableView.delegate = self
         let cellNib = UINib(nibName: "PredictionTableViewCell", bundle: nil)
@@ -67,6 +107,8 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
         showAllConceptsButton.layer.cornerRadius = 2.0
         showAllConceptsButton.alpha = 0.0
         self.showAllConceptsButton.isEnabled = false
+
+        initializeAPIKey()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -196,10 +238,14 @@ class MainViewController: UIViewController, FrameExtractorDelegate, UITableViewD
     }
 
     @objc func handleModelDidBecomeAvailable(notification: Notification) {
-        if let userInfo = notification.userInfo {
+        DispatchQueue.main.async {
+            guard let userInfo = notification.userInfo else {
+                return
+            }
+
             let modelId = userInfo[CAIModelUniqueIdentifierKey] as? String
             if modelId == "aaa03c23b3724a16a56b629203edc62c" {
-                generalModelIsReady = true
+                self.generalModelIsReady = true
                 UIView.animate(withDuration: 0.6) {
                     self.showAllConceptsButton.alpha = 1.0
                     self.showAllConceptsButton.isEnabled = true
