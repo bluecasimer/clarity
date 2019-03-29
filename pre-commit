@@ -1,0 +1,27 @@
+#!/bin/bash
+
+readonly ALLOWED_EXTENSIONS="h\|hpp\|c\|cc\|cpp\|m\|mm\|java\|js\|proto"
+
+function formatFile() {
+    local file="${1}"
+    local found_extension=$(echo ${file} | sed 's/.*\///' | sed 's/.*\.//' | grep -w "${ALLOWED_EXTENSIONS}")
+
+    if [[ -z ${file} || -z ${found_extension} ]]; then
+        return
+    fi
+
+    clang-format -i -style=file ${file}
+    git add ${file}
+}
+
+case "${1}" in
+    -h)
+        echo "clang-format applies the rules to all changed files."
+        ;;
+
+    *)
+        for file in $(git diff-index --cached --name-only HEAD); do
+            formatFile "${file}"
+        done
+        ;;
+esac
