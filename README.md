@@ -1,3 +1,5 @@
+<img src="https://clarifai.com/cms-assets/20180307033326/logo2.svg" width="512">
+
 # Clarity
 
 Hello and welcome! This repository contains the source code of the Clarity app. Here you can see and learn how we used the [Clarifai Apple SDK](https://github.com/Clarifai/clarifai-apple-sdk) to make Clarity do all the cool things it does.
